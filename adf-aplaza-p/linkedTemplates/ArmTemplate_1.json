@@ -29,6 +29,49 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/ref_functies')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Extra Bestanden"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Functies.csv",
+						"folderPath": "ref",
+						"fileSystem": "statistics"
+					},
+					"columnDelimiter": ";",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Code",
+						"type": "String"
+					},
+					{
+						"name": "Functie Soort",
+						"type": "String"
+					},
+					{
+						"name": "FunctieType",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ref_mapping_aplaza_id')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1316,7 +1359,8 @@
 				"[concat(variables('factoryId'), '/datasets/ref_verzekeraar')]",
 				"[concat(variables('factoryId'), '/datasets/ref_verzekeraar_31')]",
 				"[concat(variables('factoryId'), '/datasets/ref_producten')]",
-				"[concat(variables('factoryId'), '/datasets/ref_verzekeraar_h742_n741')]"
+				"[concat(variables('factoryId'), '/datasets/ref_verzekeraar_h742_n741')]",
+				"[concat(variables('factoryId'), '/datasets/ref_functies')]"
 			]
 		},
 		{
@@ -1661,7 +1705,8 @@
 				"[concat(variables('factoryId'), '/datasets/ref_verzekeraar')]",
 				"[concat(variables('factoryId'), '/datasets/ref_verzekeraar_31')]",
 				"[concat(variables('factoryId'), '/datasets/ref_producten')]",
-				"[concat(variables('factoryId'), '/datasets/ref_verzekeraar_h742_n741')]"
+				"[concat(variables('factoryId'), '/datasets/ref_verzekeraar_h742_n741')]",
+				"[concat(variables('factoryId'), '/datasets/ref_functies')]"
 			]
 		},
 		{
@@ -1799,74 +1844,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ref_mapping_aplaza_id')]",
 				"[concat(variables('factoryId'), '/datasets/stg_events_current')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_errors_load')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "stg_firstload_errors",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "fct_events_parquet",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "filter1"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          id as integer,",
-						"          event_id as integer,",
-						"          machine_name as string,",
-						"          title as string,",
-						"          message as string,",
-						"          user_identity as string,",
-						"          gim_function as string,",
-						"          week as integer,",
-						"          year as integer,",
-						"          created_at as timestamp,",
-						"          last_modified_at as timestamp,",
-						"          event_at as timestamp,",
-						"          item_id as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'parquet') ~> source1",
-						"source1 filter(!startsWith(user_identity, 'Systeem/')) ~> filter1",
-						"filter1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'parquet',",
-						"     partitionFileNames:[(concat('export_', toString(currentUTC(), 'yyyyMMdd_HHmmss'), '.parquet'))],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/stg_firstload_errors')]"
 			]
 		}
 	]

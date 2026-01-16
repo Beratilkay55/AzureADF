@@ -4165,30 +4165,20 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "pl_main_table_weekly",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"runtimeState": "Stopped",
+				"pipelines": [],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/statistics/blobs/raw",
-					"blobPathEndsWith": "ingest",
-					"ignoreEmptyBlobs": true,
+					"blobPathBeginsWith": "/statistics/blobs/raw/ingest",
+					"blobPathEndsWith": ".xlsx",
+					"ignoreEmptyBlobs": false,
 					"scope": "[parameters('Uitvoeren_properties_typeProperties_scope')]",
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_main_table_weekly')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Zoho Uitvoeren')]",

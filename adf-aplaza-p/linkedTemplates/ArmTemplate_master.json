@@ -102,6 +102,9 @@
 					},
 					"dlsaplazap_properties_typeProperties_url": {
 						"value": "[parameters('dlsaplazap_properties_typeProperties_url')]"
+					},
+					"Uitvoeren_properties_typeProperties_scope": {
+						"value": "[parameters('Uitvoeren_properties_typeProperties_scope')]"
 					}
 				}
 			},
@@ -152,9 +155,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"Uitvoeren_properties_typeProperties_scope": {
-						"value": "[parameters('Uitvoeren_properties_typeProperties_scope')]"
 					}
 				}
 			},
