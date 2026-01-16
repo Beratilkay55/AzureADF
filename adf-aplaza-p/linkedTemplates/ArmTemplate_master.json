@@ -1,0 +1,166 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory-naam",
+			"defaultValue": "adf-aplaza-p"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Beveiligde tekenreeks voor accountKey van AzureDataLakeStorage1"
+		},
+		"AzurePostgreSql1_password": {
+			"type": "secureString",
+			"metadata": "Beveiligde tekenreeks voor password van AzurePostgreSql1"
+		},
+		"Triggre_password": {
+			"type": "secureString",
+			"metadata": "Beveiligde tekenreeks voor password van Triggre"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dlsaplazap.dfs.core.windows.net/"
+		},
+		"AzurePostgreSql1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "localhost"
+		},
+		"AzurePostgreSql1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "postgres"
+		},
+		"AzurePostgreSql1_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "read_only_statistics_and_usermgmt"
+		},
+		"Triggre_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://portal.aplaza.nl/"
+		},
+		"Triggre_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "triggre-Lab"
+		},
+		"ZohoCRM_REST_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://www.zohoapis.eu/crm/v2/"
+		},
+		"dlsaplazap_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dlsaplazap.dfs.core.windows.net/"
+		},
+		"Uitvoeren_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/c9f8e306-962f-4818-978b-7ff3187cf577/resourceGroups/rg-aplaza-p-data/providers/Microsoft.Storage/storageAccounts/dlsaplazap"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI naar opslagaccount met gekoppelde ARM-sjablonen"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "SAS-token naar opslagaccount met gekoppelde ARM-sjablonen"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adf-aplaza-p_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureDataLakeStorage1_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					},
+					"Triggre_password": {
+						"value": "[parameters('Triggre_password')]"
+					},
+					"AzureDataLakeStorage1_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
+					},
+					"Triggre_properties_typeProperties_url": {
+						"value": "[parameters('Triggre_properties_typeProperties_url')]"
+					},
+					"Triggre_properties_typeProperties_userName": {
+						"value": "[parameters('Triggre_properties_typeProperties_userName')]"
+					},
+					"ZohoCRM_REST_properties_typeProperties_url": {
+						"value": "[parameters('ZohoCRM_REST_properties_typeProperties_url')]"
+					},
+					"dlsaplazap_properties_typeProperties_url": {
+						"value": "[parameters('dlsaplazap_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "adf-aplaza-p_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzurePostgreSql1_password": {
+						"value": "[parameters('AzurePostgreSql1_password')]"
+					},
+					"AzurePostgreSql1_properties_typeProperties_server": {
+						"value": "[parameters('AzurePostgreSql1_properties_typeProperties_server')]"
+					},
+					"AzurePostgreSql1_properties_typeProperties_database": {
+						"value": "[parameters('AzurePostgreSql1_properties_typeProperties_database')]"
+					},
+					"AzurePostgreSql1_properties_typeProperties_username": {
+						"value": "[parameters('AzurePostgreSql1_properties_typeProperties_username')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adf-aplaza-p_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "adf-aplaza-p_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"Uitvoeren_properties_typeProperties_scope": {
+						"value": "[parameters('Uitvoeren_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adf-aplaza-p_ArmTemplate_1')]"
+			]
+		}
+	]
+}

@@ -1,0 +1,2365 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory-naam",
+			"defaultValue": "adf-aplaza-p"
+		},
+		"Uitvoeren_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/c9f8e306-962f-4818-978b-7ff3187cf577/resourceGroups/rg-aplaza-p-data/providers/Microsoft.Storage/storageAccounts/dlsaplazap"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/df_flatten_api')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "api_ref_myid_json",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "api_ref_systeemhuis_json",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "api_ref_myid",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "api_ref_systeemhuis",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "flatten2"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "select2"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          filter as string[]",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source1",
+						"source(output(",
+						"          Naam as string[],",
+						"          {Systeemhuis Prefix} as string[]",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source2",
+						"source1 foldDown(unroll(filter),",
+						"     mapColumn(",
+						"          filter",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 select(mapColumn(",
+						"          filter",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"source2 derive(idxArr = mapIndex(Naam, #index)) ~> derivedColumn1",
+						"derivedColumn1 foldDown(unroll(idxArr),",
+						"     mapColumn(",
+						"          Naam,",
+						"          SysteemhuisPrefix = {Systeemhuis Prefix},",
+						"          idx = idxArr",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten2",
+						"flatten2 derive(Naam_out = at(Naam, toInteger(idx)),",
+						"          Prefix_out = at(SysteemhuisPrefix, toInteger(idx))) ~> derivedColumn2",
+						"derivedColumn2 select(mapColumn(",
+						"          Naam = Naam_out,",
+						"          {Systeemhuis Prefix} = Prefix_out",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select2",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          filter as string",
+						"     ),",
+						"     partitionFileNames:['myid.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1",
+						"select2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Naam as string,",
+						"          {Systeemhuis Prefix} as string",
+						"     ),",
+						"     partitionFileNames:['Systeemhuizen.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink2"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_proces_table_weekly_final')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "raw_statistiek_ingest",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "ref_mapping_aplaza_id",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "stg_events_current",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "select1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          EventId as string,",
+						"          MachineName as string,",
+						"          Title as string,",
+						"          TimeStamp as string,",
+						"          Message as string,",
+						"          UserIdentity as string,",
+						"          GimFunction as string,",
+						"          Week as string,",
+						"          Year as string,",
+						"          MyAand as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source(output(",
+						"          role_group as string,",
+						"          role_group_aplaza_id as string,",
+						"          username as string,",
+						"          aplaza_id as string,",
+						"          id as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source2",
+						"source1 derive(gim_function_number = split(GimFunction, '.')[1],",
+						"          my_aand_user = iif(\r",
+						"    MyAand == 'N741' || MyAand == 'H742',\r",
+						"    concat(MyAand, '_', UserIdentity),\r",
+						"    ''\r",
+						"),",
+						"          functie_id = concat(\r",
+						"    split(GimFunction, '.')[ size(split(GimFunction, '.')) - 1 ],\r",
+						"    '.',\r",
+						"    split(GimFunction, '.')[ size(split(GimFunction, '.')) ]\r",
+						")) ~> derivedColumn1",
+						"derivedColumn1, source2 join(lower(trim(UserIdentity)) == lower(trim(username)),",
+						"     joinType:'cross',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 derive(aplaza_id = iif(     !isNull(aplaza_id) && aplaza_id != '',     aplaza_id,     role_group_aplaza_id )) ~> derivedColumn2",
+						"derivedColumn2 select(mapColumn(",
+						"          event_id = EventId,",
+						"          message = Message,",
+						"          user_identity = UserIdentity,",
+						"          gim_function = GimFunction,",
+						"          gim_function_number,",
+						"          week = Week,",
+						"          jaar = Year,",
+						"          my_aand = MyAand,",
+						"          confirmation_at = TimeStamp,",
+						"          aplaza_id,",
+						"          functie_id,",
+						"          my_aand_user",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          event_id as string,",
+						"          user_identity as string,",
+						"          message as string,",
+						"          gim_function as string,",
+						"          gim_function_number as string,",
+						"          week as string,",
+						"          jaar as string,",
+						"          my_aand as string,",
+						"          confirmation_at as string,",
+						"          aplaza_id as string,",
+						"          functie_id as string,",
+						"          my_aand_user as string",
+						"     ),",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_samenvoegen_zoho')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Zoho_Gegevens",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "Zoho_Gegevens_Postbussen",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "fct_zoho_accounts",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						},
+						{
+							"name": "flatten2"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "aggregate1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          data as (Achternaam_Contactpersoon as string, Systeemhuispakket_Oud as string, Owner as (name as string, id as string, email as string), KantoorId_Statistieken as string, Sales_status as string, {$field_states} as string, Contractsoort as string, Producten_aan_te_sluiten as string[], Klantsoort as string, {$state} as string, {$process_flow} as boolean, Currency as string, Subkantoor as string, Huisnummer_toevoeging as string, Backoffice_systeem as string, id as string, Toelichting_verhoging as string, {$approval} as (delegate as boolean, takeover as boolean, approve as boolean, reject as boolean, resubmit as boolean), Naam_softwarepakket as string, Created_Time as string, Klant_EOL_nummer as string, E_mail_paspoort as string, Betaling_jaarlijks_ineens as string, ADN_berichten_via_Aplaza_J_N as string, Straatnaam as string, AFM_nummer as string, Contactpersoon_Aplaza as string, Komend_overleg as string, Financi_le_afspraken as string[], Reden_status_Niet_Afgerond as string, KvK_nummer as string, {$review_process} as (approve as boolean, reject as boolean, resubmit as boolean), Overgenomen_door as string, Jaarcontractwaarde_ACV as string, Aanmelddatum as string, Implementatiedoel as string, Record_Image as string, Einddatum_contract as string, Status_kantoor as string, E_mailadres as string, Account_Name as string, Woonplaats as string, Datum_status as string, Prospectindicator as string, Huisnummer as integer, Soort_contract as string, Productlines as string[], Verwerkersovereenkomst_ondertekend as string, {$orchestration} as boolean, Datum_facturatie as string, Eenmalig_Termijn_2 as string, Connect_postbus as string, Eenmalig_Termijn_1 as string, Moederbedrijf as string, Layout as (display_label as string, name as string, id as string), Aplaza_Producten1 as string[], Locked__s as boolean, Tag as string[], {$currency_symbol} as string, ADN_postbusnummer as string, Reden_contractwijziging_klant as string, Contactpersoon_implementatie as string, ALV as string, Intermediairs_aan_te_sluiten as string, Implementatiestatus as string, Last_Activity_Time as string, Exchange_Rate as integer, {$locked_for_me} as boolean, Aanhef_Contactpersoon as string, {$approved} as boolean, Productlines_aan_te_sluiten as string[], GebruikerId as string, {$editable} as boolean, Datum_Termijn_21 as string, Postcode as string, E_mailadres_datalekken as string, Landzone as string, Categorie_indeling as string, Relatienummer_systeemhuis as string, Bijdrage_variabel as string, E_mailadres_contactpersoon2 as string, kantoorId_statistieken_oud as string, {$zia_owner_assignment} as string, {$is_duplicate} as boolean, Type_leverancier as string, Weging_Doc_Ber as string, Aplaza_ID as string, Datum_overstap as string, Implementatiesoort as string, DORA_addendum as string, Contract_ondertekend as string, Bron_suspect_prospect as string, {$layout_id} as (display_label as string, name as string, id as string), Intermediairs_aangesloten as string, Laatste_overleg as string, Datum_Termijn_11 as string, {$review} as string, Reden_status_Vertrokken as string, Phone as string, Verwerkersovk_versienummer as string, Telefoon_contactpersoon as string, Offerte_contract_versienummer as string, Alternatieve_Naam as string, Plannen_in as string, Moeder_EOL_nummer as string, Modified_Time as string, Voornaam_Contactpersoon as string, Landc as string, Frequentie as string, Hoofdkantoor as (name as string, id as string), Systeemhuis_overig as string, Contactpersoon_Partner as string, Gebruikt_Solera_ABZ as string, {$in_merge} as boolean, Verhoging as string[], {$approval_state} as string, Systeemhuis as string)[],",
+						"          info as (per_page as integer, count as integer, page as integer, sort_by as string, sort_order as string, more_records as boolean)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source1",
+						"source(output(",
+						"          data as (Owner as (name as string, id as string, email as string), {$currency_symbol} as string, {$field_states} as string, {$review_process} as (approve as boolean, reject as boolean, resubmit as boolean), Bedrijfsnaam as (name as string, id as string), {$layout_id} as (display_label as string, name as string, id as string), Name as string, Last_Activity_Time as string, Record_Image as string, {$review} as string, {$state} as string, Unsubscribed_Mode as string, {$process_flow} as boolean, Exchange_Rate as integer, Currency as string, Temp_eigenaar as string, {$locked_for_me} as boolean, id as string, {$approved} as boolean, {$approval} as (delegate as boolean, takeover as boolean, approve as boolean, reject as boolean, resubmit as boolean), Modified_Time as string, Created_Time as string, Unsubscribed_Time as string, {$editable} as boolean, Time_contract as string, {$orchestration} as boolean, {$in_merge} as boolean, Locked__s as boolean, Type_postbus as string, Tag as string[], {$zia_owner_assignment} as string, {$approval_state} as string)[],",
+						"          info as (per_page as integer, count as integer, page as integer, sort_by as string, sort_order as string, more_records as boolean)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source2",
+						"source1 foldDown(unroll(data),",
+						"     mapColumn(",
+						"          KantoorId = data.KantoorId_Statistieken,",
+						"          Systeemhuis = data.Systeemhuis,",
+						"          Account_Name = data.Account_Name,",
+						"          Klantsoort = data.Klantsoort,",
+						"          Subkantoor = data.Subkantoor,",
+						"          Huisnummer_toevoeging = data.Huisnummer_toevoeging,",
+						"          Toelichting_verhoging = data.Toelichting_verhoging,",
+						"          Created_Time = data.Created_Time,",
+						"          Klant_EOL_nummer = data.Klant_EOL_nummer,",
+						"          Straatnaam = data.Straatnaam,",
+						"          Afm_nummer = data.AFM_nummer,",
+						"          Kvk_nummer = data.KvK_nummer,",
+						"          Aanmelddatum = data.Aanmelddatum,",
+						"          Einddatum_contract = data.Einddatum_contract,",
+						"          Status_kantoor = data.Status_kantoor,",
+						"          E_mailadres = data.E_mailadres,",
+						"          Account_Name = data.Account_Name,",
+						"          Woonplaats = data.Woonplaats,",
+						"          Huisnummer = data.Huisnummer,",
+						"          Connect_postbus = data.Connect_postbus,",
+						"          Contactpersoon_implementatie = data.Contactpersoon_implementatie,",
+						"          GebruikerID = data.GebruikerId,",
+						"          Postcode = data.Postcode,",
+						"          Landzone = data.Landzone,",
+						"          Type_leverancier = data.Type_leverancier,",
+						"          Aplaza_ID = data.Aplaza_ID,",
+						"          Phone = data.Phone,",
+						"          Hoofdkantoor = data.Hoofdkantoor.name,",
+						"          Systeemhuis = data.Systeemhuis,",
+						"          id = data.id,",
+						"          Reden_status_Vertrokken = data.Reden_status_Vertrokken,",
+						"          Datum_status = data.Datum_status,",
+						"          Reden_status_Niet_Afgerond = data.Reden_status_Niet_Afgerond",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> flatten1",
+						"source2 foldDown(unroll(data),",
+						"     mapColumn(",
+						"          Id = data.Bedrijfsnaam.id,",
+						"          Type_postbus = data.Type_postbus,",
+						"          Time_contract = data.Time_contract,",
+						"          Postbus_Nummer = data.Name",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten2",
+						"flatten1, aggregate1 join(flatten1@id == aggregate1@Id,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 select(mapColumn(",
+						"          Straatnaam,",
+						"          Bedrijfsnaam = Account_Name,",
+						"          Afm_nummer,",
+						"          Kvk_nummer,",
+						"          Aanmelddatum,",
+						"          Einddatum_contract,",
+						"          Status_kantoor,",
+						"          E_mailadres,",
+						"          Account_Name,",
+						"          Woonplaats,",
+						"          Huisnummer,",
+						"          Connect_postbus,",
+						"          Postcode,",
+						"          Aplaza_ID,",
+						"          Phone,",
+						"          Hoofdkantoor,",
+						"          Time_contract = EMS_Time_Contract,",
+						"          EMS_Postbusnummer,",
+						"          Connect_Postbusnummer,",
+						"          Reden_status_Vertrokken,",
+						"          Datum_status,",
+						"          Systeemhuis,",
+						"          Reden_status_Niet_Afgerond",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"flatten2 derive(EMS_Postbusnummer = iif(Type_postbus == 'EMS', Postbus_Nummer, ''),",
+						"          Connect_Postbusnummer = iif(Type_postbus == 'Connect', Postbus_Nummer, ''),",
+						"          EMS_Time_Contract = iif(Type_postbus == 'EMS', Time_contract, '')) ~> derivedColumn1",
+						"derivedColumn1 aggregate(groupBy(Id),",
+						"     EMS_Postbusnummer = max(EMS_Postbusnummer),",
+						"          Connect_Postbusnummer = max(Connect_Postbusnummer),",
+						"          EMS_Time_Contract = max(EMS_Time_Contract)) ~> aggregate1",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          KantoorId as string,",
+						"          Klantsoort as string,",
+						"          Subkantoor as string,",
+						"          Huisnummer_toevoeging as string,",
+						"          Toelichting_verhoging as string,",
+						"          Created_Time as string,",
+						"          Klant_EOL_nummer as string,",
+						"          Straatnaam as string,",
+						"          Afm_nummer as string,",
+						"          Kvk_nummer as string,",
+						"          Aanmelddatum as string,",
+						"          Einddatum_contract as string,",
+						"          Status_kantoor as string,",
+						"          E_mailadres as string,",
+						"          Account_Name as string,",
+						"          Woonplaats as string,",
+						"          Huisnummer as integer,",
+						"          Connect_postbus as string,",
+						"          Contactpersoon_implementatie as string,",
+						"          GebruikerID as string,",
+						"          Postcode as string,",
+						"          Landzone as string,",
+						"          Type_leverancier as string,",
+						"          Aplaza_ID as string,",
+						"          Phone as string,",
+						"          Hoofdkantoor as string,",
+						"          Systeemhuis as string,",
+						"          Type_postbus as string,",
+						"          Time_contract as string,",
+						"          Postbus_Nummer as string",
+						"     ),",
+						"     format: 'parquet',",
+						"     partitionFileNames:['Zoho_Gegevens.parquet'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     partitionBy('hash', 1)) ~> sink2"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_samenvoegen_zoho_postbussen')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Zoho_Gegevens_Postbussen",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "fct_zoho_postbussen",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          data as (Owner as (name as string, id as string, email as string), {$currency_symbol} as string, {$field_states} as string, {$review_process} as (approve as boolean, reject as boolean, resubmit as boolean), Bedrijfsnaam as (name as string, id as string), {$layout_id} as (display_label as string, name as string, id as string), Name as string, Last_Activity_Time as string, Record_Image as string, {$review} as string, {$state} as string, Unsubscribed_Mode as string, {$process_flow} as boolean, Exchange_Rate as integer, Currency as string, Temp_eigenaar as string, {$locked_for_me} as boolean, id as string, {$approved} as boolean, {$approval} as (delegate as boolean, takeover as boolean, approve as boolean, reject as boolean, resubmit as boolean), Modified_Time as string, Created_Time as string, Unsubscribed_Time as string, {$editable} as boolean, Time_contract as string, {$orchestration} as boolean, {$in_merge} as boolean, Locked__s as boolean, Type_postbus as string, Tag as string[], {$zia_owner_assignment} as string, {$approval_state} as string)[],",
+						"          info as (per_page as integer, count as integer, page as integer, sort_by as string, sort_order as string, more_records as boolean)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source1",
+						"source1 foldDown(unroll(data),",
+						"     mapColumn(",
+						"          Bedrijfsnaam = data.Bedrijfsnaam,",
+						"          Id = data.Bedrijfsnaam.id,",
+						"          Type_postbus = data.Type_postbus,",
+						"          Postbus_nummer = data.Name,",
+						"          Time_contract = data.Time_contract",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     partitionFileNames:['Zoho_Gegevens_Postbussen.parquet'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_subkantoren_ingest')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ref_subkantoor",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ref_subkantoor_actief",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "filter1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "select1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          kantoorId as string,",
+						"          GebruikerId as string,",
+						"          {Naam subkantoor} as string,",
+						"          Begindatum as string,",
+						"          Einddatum as string,",
+						"          {Einddatum is t/m en geldt voor hele kantoor niet voor subkantoor (die wordt met * aangegeven)} as string,",
+						"          {Gecontroleerd op dubbele 14-2-2024} as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 filter(toDate(Einddatum) >= currentDate()) ~> filter1",
+						"select1 derive(KantoorGebruikerId = replace(     toString(KantoorGebruikerId), '-',     '_' )) ~> derivedColumn1",
+						"filter1 select(mapColumn(",
+						"          Subkantoor = {Naam subkantoor},",
+						"          KantoorGebruikerId = {Einddatum is t/m en geldt voor hele kantoor niet voor subkantoor (die wordt met * aangegeven)}",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"derivedColumn1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['Subkantoren_Final.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Fetch_Zoho_Data_Postbussen')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "access_token",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/x-www-form-urlencoded"
+							},
+							"url": "https://accounts.zoho.eu/oauth/v2/token",
+							"body": "client_id=1000.H7AXV6PG197Q4XA3WDGC1PSVBUIOCX&client_secret=02a75a54614ee025d583a6cad09a463579f2c20b1b&refresh_token=1000.042d3217d39b8f731a388c46f668be22.1c5987b6f8f65c5f3e4d55f684fe23dc&grant_type=refresh_token"
+						}
+					},
+					{
+						"name": "Until",
+						"type": "Until",
+						"dependsOn": [
+							{
+								"activity": "access_token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(variables('continueLoop'), false)\n",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Fetch_Data",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET",
+											"additionalHeaders": {
+												"Authorization": {
+													"value": "@concat('Bearer ', activity('access_token').output.access_token)",
+													"type": "Expression"
+												},
+												"Accept": "application/json"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings",
+												"fileName": "@concat('Zoho_Data_Page_', string(variables('page')), '.json')",
+												"copyBehavior": "FlattenHierarchy"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings",
+												"filePattern": "singleDocument"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "Ophalen_Zoho_API_REST",
+											"type": "DatasetReference",
+											"parameters": {
+												"entity": "Postbussen"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Zoho_Gegevens_Postbussen",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								},
+								{
+									"name": "ContinueLoop",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Fetch_Data",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "continueLoop",
+										"value": {
+											"value": "@greater(activity('Fetch_Data').output.rowsRead, 0)",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "VolgendePagina",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "ContinueLoop",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "tempPage",
+										"value": {
+											"value": "@add(variables('page'), 1)",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Page",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "VolgendePagina",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "page",
+										"value": {
+											"value": "@variables('tempPage')  \n",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"timeout": "0.12:00:00"
+						}
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Until",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_samenvoegen_zoho_postbussen",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"continueLoop": {
+						"type": "Boolean",
+						"defaultValue": true
+					},
+					"tempPage": {
+						"type": "Integer"
+					},
+					"page": {
+						"type": "Integer",
+						"defaultValue": 1
+					},
+					"page2": {
+						"type": "Integer",
+						"defaultValue": 1
+					},
+					"tempPage2": {
+						"type": "Integer"
+					}
+				},
+				"folder": {
+					"name": "SidePipelines"
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-19T15:03:08Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_samenvoegen_zoho_postbussen')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_api_call')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "FilterMyID",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "lab/interfaces/rest/dwhFilters/dwhFilters"
+							},
+							{
+								"name": "Destination",
+								"value": "statistics/api/run.json"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "POST",
+								"requestBody": "{\n  \"apikey\": \"+SjtTqVK5IJPiZBSJEFEY+L12bPAaGkvhqBcVEueCHw=\",\n  \"type\": \"KantoorId\"\n}",
+								"additionalHeaders": {
+									"Content-Type": "application/json"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "filter"
+										},
+										"sink": {
+											"name": "items"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "rest_Triggre",
+								"type": "DatasetReference",
+								"parameters": {
+									"relativeURL": "lab/interfaces/rest/dwhFilters/dwhFilters"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "api_ref_myid_json",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Systeemhuizen",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "FilterMyID",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "lab/interfaces/rest/dwhFilters/dwhFilters"
+							},
+							{
+								"name": "Destination",
+								"value": "statistics/api/run.json"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "POST",
+								"requestBody": "{\n  \"apikey\": \"+SjtTqVK5IJPiZBSJEFEY+L12bPAaGkvhqBcVEueCHw=\"\n}",
+								"additionalHeaders": {
+									"Content-Type": "application/json"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "rest_Triggre",
+								"type": "DatasetReference",
+								"parameters": {
+									"relativeURL": "lab/interfaces/rest/systeemhuisMapping/systeemhuisMapping"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "api_ref_systeemhuis_json",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Systeemhuizen",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_flatten_api",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"WebOutput": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-01-07T11:23:17Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_flatten_api')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_table_realtime')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Verwijder Tijdelijk Parquet",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "AzurePostgreSql1",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "CREATE OR REPLACE VIEW public.vw_aplaza_all AS\nWITH base AS (\n  SELECT\n    v.event_id,\n    CASE\n      WHEN v.Message_txt IS NOT NULL\n       AND NULLIF(btrim(v.Message_txt), '') ~ '^[+-]?[0-9]+$'\n        THEN (NULLIF(btrim(v.Message_txt), ''))::bigint\n      ELSE NULL\n    END AS Message,\n    v.user_identity,\n    v.gim_function,\n    COALESCE(\n      v.gim_function_number, \n      CASE\n        WHEN split_part(v.gim_function, '.', 1) ~ '^[0-9]+$'\n          THEN split_part(v.gim_function, '.', 1)::int\n        ELSE NULL\n      END\n    ) AS gim_function_number,\n    v.week,\n    v.jaar,\n    v.my_aand,\n    v.confirmation_at,\n    COALESCE(NULLIF(r.aplaza_id, ''), r.role_group_aplaza_id) AS aplaza_id\n  FROM (\n    -- file_results: confirmation_at + 1 hours\n    SELECT\n      event_id::text                AS event_id,\n      Message::text                 AS Message_txt,\n      user_identity::text           AS user_identity,\n      gim_function::text            AS gim_function,\n      NULL::int                     AS gim_function_number, \n      week::int                     AS week,\n      year::int                     AS jaar,\n      my_aand::text                 AS my_aand,\n      (confirmation_at + interval '1 hours')::timestamptz AS confirmation_at\n    FROM statistics.file_results\n    WHERE confirmation_at IS NOT NULL\n\n    UNION ALL\n\n    -- transactions: event_at -> confirmation_at + 1 hours\n    SELECT\n      event_id::text                AS event_id,\n      NULL::text                    AS Message_txt,\n      user_identity::text           AS user_identity,\n      gim_function::text            AS gim_function,\n      CASE\n        WHEN split_part(gim_function, '.', 1) ~ '^[0-9]+$'\n          THEN split_part(gim_function, '.', 1)::int\n        ELSE NULL\n      END                           AS gim_function_number,\n      week::int                     AS week,\n      year::int                     AS jaar,\n      NULL::text                    AS my_aand,\n      (event_at + interval '1 hours')::timestamptz AS confirmation_at\n    FROM statistics.transactions\n    WHERE event_at IS NOT NULL\n  ) v\n  LEFT JOIN usermgmt.v_get_aplaza_ids r\n    ON lower(trim(v.user_identity)) = lower(trim(r.username))\n)\nSELECT\n  b.*,\n  (\n    (regexp_split_to_array(b.gim_function, '\\.'))[\n      array_length(regexp_split_to_array(b.gim_function, '\\.'), 1) - 1\n    ]\n    || '.' ||\n    (regexp_split_to_array(b.gim_function, '\\.'))[\n      array_length(regexp_split_to_array(b.gim_function, '\\.'), 1)\n    ]\n  ) AS functie_id,\n  CASE \n    WHEN b.my_aand IN ('N741','H742') \n      THEN b.my_aand || '_' || b.user_identity\n    ELSE NULL\n  END AS my_aand_user\nFROM base AS b\nWHERE b.event_id IS NOT NULL\n  AND (b.user_identity IS NULL OR b.user_identity NOT LIKE 'EZAPP%')\n  AND NOT (b.event_id IN ('73','74') AND b.Message = 0)\n  AND (\n    b.event_id <> '45'\n    OR (regexp_split_to_array(b.gim_function, '\\.'))[3] = '300'\n  );\n"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Set variable4",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('weeksToCheck')",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Get Metadata1",
+									"type": "GetMetadata",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "fct_events_export_check",
+											"type": "DatasetReference",
+											"parameters": {
+												"Folder": "final/Statistieken/year=2026",
+												"FileName": {
+													"value": "@concat('export_week_', string(item()), '.csv')",
+													"type": "Expression"
+												}
+											}
+										},
+										"fieldList": [
+											"exists"
+										],
+										"storeSettings": {
+											"type": "AzureBlobFSReadSettings",
+											"recursive": true,
+											"enablePartitionDiscovery": false
+										},
+										"formatSettings": {
+											"type": "DelimitedTextReadSettings"
+										}
+									}
+								},
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "Get Metadata1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@not(activity('Get Metadata1').output.exists)\n",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "Copy data1",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "AzurePostgreSqlSource",
+														"query": {
+															"value": "@concat(\n  'SELECT * ',\n  'FROM public.vw_aplaza_all ',\n  'WHERE week = ', string(item()),\n  ' AND jaar = 2026;'\n)\n",
+															"type": "Expression"
+														},
+														"partitionOption": "None",
+														"queryTimeout": "02:00:00"
+													},
+													"sink": {
+														"type": "ParquetSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "ParquetWriteSettings"
+														}
+													},
+													"enableStaging": false,
+													"translator": {
+														"type": "TabularTranslator",
+														"typeConversion": true,
+														"typeConversionSettings": {
+															"allowDataTruncation": true,
+															"treatBooleanAsNumber": false
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "fct_events_sql",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "stg_events_current_temp",
+														"type": "DatasetReference",
+														"parameters": {
+															"FileName": {
+																"value": "@concat('week_', string(item()), '.parquet')",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											},
+											{
+												"name": "Set variable5",
+												"type": "SetVariable",
+												"dependsOn": [
+													{
+														"activity": "Copy data1",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "hasNewWeeks",
+													"value": {
+														"value": "@bool('true')\n",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Set CurrentWeek",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Script_GetWeek",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "currentWeek",
+							"value": {
+								"value": "@int(activity('Script_GetWeek').output.resultSets[0].rows[0].current_week)",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set WeekCounter",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set variable3",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "weekCounter",
+							"value": 1
+						}
+					},
+					{
+						"name": "Until1",
+						"type": "Until",
+						"dependsOn": [
+							{
+								"activity": "Set WeekCounter",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@greater(variables('weekCounter'), variables('currentWeek'))\n",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Append variable1",
+									"type": "AppendVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "weeksToCheck",
+										"value": {
+											"value": "@variables('weekCounter')",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Set variable1",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Append variable1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "weekCounterNext",
+										"value": {
+											"value": "@add(variables('weekCounter'), 1)\n",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Set variable2",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Set variable1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "weekCounter",
+										"value": {
+											"value": "@variables('weekCounterNext')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"timeout": "0.12:00:00"
+						}
+					},
+					{
+						"name": "Set variable3",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set CurrentWeek",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "weeksToCheck",
+							"value": {
+								"value": "@json('[]')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set variable4",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Until1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "hasNewWeeks",
+							"value": {
+								"value": "@bool('false')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Script_GetWeek",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "AzurePostgreSql1",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "SELECT EXTRACT(WEEK FROM (NOW() AT TIME ZONE 'UTC'))::int AS current_week;"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Data_Process",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_data_process_final_table_real_time",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Hoofdtabel1": {},
+									"Verzekeraar": {},
+									"Hoofdtabel2": {},
+									"Verzekeraar31": {},
+									"Producten": {},
+									"Hoofdtabel3": {},
+									"VerzekeraarH742N741": {},
+									"Functies": {},
+									"Systeemhuis": {},
+									"MyIDFilter": {},
+									"sink1": {
+										"Folder": {
+											"value": "@concat( 'final/Statistieken/Temp')",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Verwijder Tijdelijk Parquet",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Verwijder Tijdelijk Staging",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "fct_events_export_temp",
+								"type": "DatasetReference",
+								"parameters": {
+									"Folder": "@concat( 'final/Statistieken/Temp')"
+								}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "Verwijder Tijdelijk Staging",
+						"type": "Delete",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "stg_events_current_temp_inlezen",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"currentWeek": {
+						"type": "Integer"
+					},
+					"weeksToCheck": {
+						"type": "Array"
+					},
+					"weekCounter": {
+						"type": "Integer"
+					},
+					"weekCounterNext": {
+						"type": "Integer"
+					},
+					"hasNewWeeks": {
+						"type": "Boolean"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-01-15T14:00:08Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_main_table_weekly')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data Process",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "SetWeek",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_data_process_final_table",
+								"type": "DataFlowReference",
+								"parameters": {
+									"p_week": {
+										"value": "'@{variables('v_week')}'",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"Hoofdtabel1": {},
+									"Verzekeraar": {},
+									"Hoofdtabel2": {},
+									"Verzekeraar31": {},
+									"Producten": {},
+									"Hoofdtabel3": {},
+									"VerzekeraarH742N741": {},
+									"Functies": {},
+									"Systeemhuis": {},
+									"MyIDFilter": {},
+									"sink1": {
+										"Folder": {
+											"value": "@concat( 'final/Statistieken/', 'year=', formatDateTime(convertFromUtc(utcNow(),'W. Europe Standard Time'),'yyyy'))",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Data flow2",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_data_process_load",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [
+							{
+								"activity": "Subkantoren",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzurePostgreSqlSource",
+								"partitionOption": "None",
+								"queryTimeout": "02:00:00"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "fct_aplaza_id",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ref_mapping_aplaza_id",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "LookupWeekExcel",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "Data flow2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "stg_events_current",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "SetWeek",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "LookupWeekExcel",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "v_week",
+							"value": {
+								"value": "@activity('LookupWeekExcel').output.firstRow.week",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Subkantoren",
+						"type": "ExecuteDataFlow",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_subkantoren_ingest",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Verwijder Tijdelijk Bestand",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Data Process",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "stg_events_current",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "Execute Pipeline1",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Verwijder Tijdelijk Bestand",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "pl_table_realtime",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"v_week": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-01-15T14:00:08Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_subkantoren_ingest')]",
+				"[concat(variables('factoryId'), '/pipelines/pl_table_realtime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_zoho_fetch')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "access_token",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Execute Pipeline1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/x-www-form-urlencoded"
+							},
+							"url": "https://accounts.zoho.eu/oauth/v2/token",
+							"body": "client_id=1000.H7AXV6PG197Q4XA3WDGC1PSVBUIOCX&client_secret=02a75a54614ee025d583a6cad09a463579f2c20b1b&refresh_token=1000.042d3217d39b8f731a388c46f668be22.1c5987b6f8f65c5f3e4d55f684fe23dc&grant_type=refresh_token"
+						}
+					},
+					{
+						"name": "Until",
+						"type": "Until",
+						"dependsOn": [
+							{
+								"activity": "access_token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(variables('continueLoop'), false)\n",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Fetch_Data",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET",
+											"additionalHeaders": {
+												"Authorization": {
+													"value": "@concat('Bearer ', activity('access_token').output.access_token)",
+													"type": "Expression"
+												},
+												"Accept": "application/json"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings",
+												"fileName": "@concat('Zoho_Data_Page_', string(variables('page')), '.json')",
+												"copyBehavior": "FlattenHierarchy"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings",
+												"filePattern": "singleDocument"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "Ophalen_Zoho_API_REST",
+											"type": "DatasetReference",
+											"parameters": {
+												"entity": "Accounts"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Zoho_Gegevens",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								},
+								{
+									"name": "ContinueLoop",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Fetch_Data",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "continueLoop",
+										"value": {
+											"value": "@greater(activity('Fetch_Data').output.rowsRead, 0)",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "VolgendePagina",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "ContinueLoop",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "tempPage",
+										"value": {
+											"value": "@add(variables('page'), 1)",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Page",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "VolgendePagina",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "page",
+										"value": {
+											"value": "@variables('tempPage')  \n",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"timeout": "0.12:00:00"
+						}
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Until",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_samenvoegen_zoho",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Delete1",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Data flow1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Zoho_Gegevens",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "Delete1_copy1",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Delete1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Zoho_Gegevens_Postbussen",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "Execute Pipeline1",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Fetch_Zoho_Data_Postbussen",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"continueLoop": {
+						"type": "Boolean",
+						"defaultValue": true
+					},
+					"tempPage": {
+						"type": "Integer"
+					},
+					"page": {
+						"type": "Integer",
+						"defaultValue": 1
+					},
+					"page2": {
+						"type": "Integer",
+						"defaultValue": 1
+					},
+					"tempPage2": {
+						"type": "Integer"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-24T11:28:20Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_samenvoegen_zoho')]",
+				"[concat(variables('factoryId'), '/pipelines/Fetch_Zoho_Data_Postbussen')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Uitvoeren')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_main_table_weekly",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/statistics/blobs/raw",
+					"blobPathEndsWith": "ingest",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Uitvoeren_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_main_table_weekly')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Zoho Uitvoeren')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_zoho_fetch",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Week",
+						"interval": 1,
+						"startTime": "2026-01-09T10:31:00",
+						"timeZone": "W. Europe Standard Time",
+						"schedule": {
+							"hours": [
+								9
+							],
+							"weekDays": [
+								"Saturday"
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_zoho_fetch')]"
+			]
+		}
+	]
+}

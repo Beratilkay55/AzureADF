@@ -1,0 +1,1480 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory-naam",
+			"defaultValue": "adf-aplaza-p"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Beveiligde tekenreeks voor accountKey van AzureDataLakeStorage1"
+		},
+		"Triggre_password": {
+			"type": "secureString",
+			"metadata": "Beveiligde tekenreeks voor password van Triggre"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dlsaplazap.dfs.core.windows.net/"
+		},
+		"Triggre_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://portal.aplaza.nl/"
+		},
+		"Triggre_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "triggre-Lab"
+		},
+		"ZohoCRM_REST_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://www.zohoapis.eu/crm/v2/"
+		},
+		"dlsaplazap_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dlsaplazap.dfs.core.windows.net/"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Triggre')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('Triggre_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('Triggre_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('Triggre_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ZohoCRM_REST')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"entity": {
+						"type": "string",
+						"defaultValue": "Accounts"
+					}
+				},
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('ZohoCRM_REST_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dlsaplazap')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "data lake storage connection to data factory",
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('dlsaplazap_properties_typeProperties_url')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/IR-LaptopBerat')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Ophalen_Zoho_API_REST')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ZohoCRM_REST",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"entity": "Accounts"
+					}
+				},
+				"parameters": {
+					"entity": {
+						"type": "string",
+						"defaultValue": "Accounts"
+					}
+				},
+				"folder": {
+					"name": "Zoho"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat(dataset().entity,'?page=', string(variables('page')), '&per_page=200')",
+						"type": "Expression"
+					}
+				},
+				"schema": [],
+				"format": {
+					"type": "JsonFormat",
+					"filePattern": "setOfObjects",
+					"jsonPathDefinition": "$.data"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ZohoCRM_REST')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Zoho_Gegevens')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Zoho"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "staging/zoho_gegevens",
+						"fileSystem": "statistics"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"Achternaam_Contactpersoon": {
+										"type": "null"
+									},
+									"Systeemhuispakket_Oud": {
+										"type": "null"
+									},
+									"Owner": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											},
+											"id": {
+												"type": "string"
+											},
+											"email": {
+												"type": "string"
+											}
+										}
+									},
+									"KantoorId_Statistieken": {
+										"type": "string"
+									},
+									"Sales_status": {
+										"type": "null"
+									},
+									"$field_states": {
+										"type": "null"
+									},
+									"Contractsoort": {
+										"type": "null"
+									},
+									"Producten_aan_te_sluiten": {
+										"type": "array"
+									},
+									"Klantsoort": {
+										"type": "null"
+									},
+									"$state": {
+										"type": "string"
+									},
+									"$process_flow": {
+										"type": "boolean"
+									},
+									"Currency": {
+										"type": "string"
+									},
+									"Subkantoor": {
+										"type": "string"
+									},
+									"Huisnummer_toevoeging": {
+										"type": "null"
+									},
+									"Backoffice_systeem": {
+										"type": "null"
+									},
+									"id": {
+										"type": "string"
+									},
+									"Toelichting_verhoging": {
+										"type": "null"
+									},
+									"$approval": {
+										"type": "object",
+										"properties": {
+											"delegate": {
+												"type": "boolean"
+											},
+											"takeover": {
+												"type": "boolean"
+											},
+											"approve": {
+												"type": "boolean"
+											},
+											"reject": {
+												"type": "boolean"
+											},
+											"resubmit": {
+												"type": "boolean"
+											}
+										}
+									},
+									"Naam_softwarepakket": {
+										"type": "null"
+									},
+									"Created_Time": {
+										"type": "string"
+									},
+									"Klant_EOL_nummer": {
+										"type": "null"
+									},
+									"E_mail_paspoort": {
+										"type": "string"
+									},
+									"Betaling_jaarlijks_ineens": {
+										"type": "null"
+									},
+									"ADN_berichten_via_Aplaza_J_N": {
+										"type": "string"
+									},
+									"Straatnaam": {
+										"type": "string"
+									},
+									"AFM_nummer": {
+										"type": "string"
+									},
+									"Contactpersoon_Aplaza": {
+										"type": "null"
+									},
+									"Komend_overleg": {
+										"type": "null"
+									},
+									"Financi_le_afspraken": {
+										"type": "array"
+									},
+									"Reden_status_Niet_Afgerond": {
+										"type": "null"
+									},
+									"KvK_nummer": {
+										"type": "string"
+									},
+									"$review_process": {
+										"type": "object",
+										"properties": {
+											"approve": {
+												"type": "boolean"
+											},
+											"reject": {
+												"type": "boolean"
+											},
+											"resubmit": {
+												"type": "boolean"
+											}
+										}
+									},
+									"Overgenomen_door": {
+										"type": "null"
+									},
+									"Jaarcontractwaarde_ACV": {
+										"type": "null"
+									},
+									"Aanmelddatum": {
+										"type": "string"
+									},
+									"Implementatiedoel": {
+										"type": "null"
+									},
+									"Record_Image": {
+										"type": "null"
+									},
+									"Einddatum_contract": {
+										"type": "null"
+									},
+									"Status_kantoor": {
+										"type": "string"
+									},
+									"E_mailadres": {
+										"type": "string"
+									},
+									"Account_Name": {
+										"type": "string"
+									},
+									"Woonplaats": {
+										"type": "string"
+									},
+									"Datum_status": {
+										"type": "string"
+									},
+									"Prospectindicator": {
+										"type": "null"
+									},
+									"Huisnummer": {
+										"type": "integer"
+									},
+									"Soort_contract": {
+										"type": "null"
+									},
+									"Productlines": {
+										"type": "array"
+									},
+									"Verwerkersovereenkomst_ondertekend": {
+										"type": "null"
+									},
+									"$orchestration": {
+										"type": "boolean"
+									},
+									"Datum_facturatie": {
+										"type": "null"
+									},
+									"Eenmalig_Termijn_2": {
+										"type": "null"
+									},
+									"Connect_postbus": {
+										"type": "null"
+									},
+									"Eenmalig_Termijn_1": {
+										"type": "null"
+									},
+									"Moederbedrijf": {
+										"type": "null"
+									},
+									"Layout": {
+										"type": "object",
+										"properties": {
+											"display_label": {
+												"type": "string"
+											},
+											"name": {
+												"type": "string"
+											},
+											"id": {
+												"type": "string"
+											}
+										}
+									},
+									"Aplaza_Producten1": {
+										"type": "array"
+									},
+									"Locked__s": {
+										"type": "boolean"
+									},
+									"Tag": {
+										"type": "array"
+									},
+									"$currency_symbol": {
+										"type": "string"
+									},
+									"ADN_postbusnummer": {
+										"type": "string"
+									},
+									"Reden_contractwijziging_klant": {
+										"type": "null"
+									},
+									"Contactpersoon_implementatie": {
+										"type": "null"
+									},
+									"ALV": {
+										"type": "null"
+									},
+									"Intermediairs_aan_te_sluiten": {
+										"type": "null"
+									},
+									"Implementatiestatus": {
+										"type": "null"
+									},
+									"Last_Activity_Time": {
+										"type": "string"
+									},
+									"Exchange_Rate": {
+										"type": "integer"
+									},
+									"$locked_for_me": {
+										"type": "boolean"
+									},
+									"Aanhef_Contactpersoon": {
+										"type": "null"
+									},
+									"$approved": {
+										"type": "boolean"
+									},
+									"Productlines_aan_te_sluiten": {
+										"type": "array"
+									},
+									"GebruikerId": {
+										"type": "string"
+									},
+									"$editable": {
+										"type": "boolean"
+									},
+									"Datum_Termijn_21": {
+										"type": "null"
+									},
+									"Postcode": {
+										"type": "string"
+									},
+									"E_mailadres_datalekken": {
+										"type": "null"
+									},
+									"Landzone": {
+										"type": "null"
+									},
+									"Categorie_indeling": {
+										"type": "null"
+									},
+									"Relatienummer_systeemhuis": {
+										"type": "null"
+									},
+									"Bijdrage_variabel": {
+										"type": "null"
+									},
+									"E_mailadres_contactpersoon2": {
+										"type": "null"
+									},
+									"kantoorId_statistieken_oud": {
+										"type": "null"
+									},
+									"$zia_owner_assignment": {
+										"type": "string"
+									},
+									"$is_duplicate": {
+										"type": "boolean"
+									},
+									"Type_leverancier": {
+										"type": "null"
+									},
+									"Weging_Doc_Ber": {
+										"type": "null"
+									},
+									"Aplaza_ID": {
+										"type": "string"
+									},
+									"Datum_overstap": {
+										"type": "null"
+									},
+									"Implementatiesoort": {
+										"type": "null"
+									},
+									"DORA_addendum": {
+										"type": "null"
+									},
+									"Contract_ondertekend": {
+										"type": "null"
+									},
+									"Bron_suspect_prospect": {
+										"type": "null"
+									},
+									"$layout_id": {
+										"type": "object",
+										"properties": {
+											"display_label": {
+												"type": "string"
+											},
+											"name": {
+												"type": "string"
+											},
+											"id": {
+												"type": "string"
+											}
+										}
+									},
+									"Intermediairs_aangesloten": {
+										"type": "null"
+									},
+									"Laatste_overleg": {
+										"type": "null"
+									},
+									"Datum_Termijn_11": {
+										"type": "null"
+									},
+									"$review": {
+										"type": "null"
+									},
+									"Reden_status_Vertrokken": {
+										"type": "null"
+									},
+									"Phone": {
+										"type": "string"
+									},
+									"Verwerkersovk_versienummer": {
+										"type": "null"
+									},
+									"Telefoon_contactpersoon": {
+										"type": "null"
+									},
+									"Offerte_contract_versienummer": {
+										"type": "null"
+									},
+									"Alternatieve_Naam": {
+										"type": "null"
+									},
+									"Plannen_in": {
+										"type": "null"
+									},
+									"Moeder_EOL_nummer": {
+										"type": "null"
+									},
+									"Modified_Time": {
+										"type": "string"
+									},
+									"Voornaam_Contactpersoon": {
+										"type": "null"
+									},
+									"Landc": {
+										"type": "null"
+									},
+									"Frequentie": {
+										"type": "null"
+									},
+									"Hoofdkantoor": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											},
+											"id": {
+												"type": "string"
+											}
+										}
+									},
+									"Systeemhuis_overig": {
+										"type": "null"
+									},
+									"Contactpersoon_Partner": {
+										"type": "null"
+									},
+									"Gebruikt_Solera_ABZ": {
+										"type": "null"
+									},
+									"$in_merge": {
+										"type": "boolean"
+									},
+									"Verhoging": {
+										"type": "array"
+									},
+									"$approval_state": {
+										"type": "string"
+									},
+									"Systeemhuis": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"info": {
+							"type": "object",
+							"properties": {
+								"per_page": {
+									"type": "integer"
+								},
+								"count": {
+									"type": "integer"
+								},
+								"page": {
+									"type": "integer"
+								},
+								"sort_by": {
+									"type": "string"
+								},
+								"sort_order": {
+									"type": "string"
+								},
+								"more_records": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Zoho_Gegevens_Postbussen')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Zoho"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "staging/zoho_gegevens_postbussen",
+						"fileSystem": "statistics"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"Owner": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											},
+											"id": {
+												"type": "string"
+											},
+											"email": {
+												"type": "string"
+											}
+										}
+									},
+									"$currency_symbol": {
+										"type": "string"
+									},
+									"$field_states": {
+										"type": "null"
+									},
+									"$review_process": {
+										"type": "object",
+										"properties": {
+											"approve": {
+												"type": "boolean"
+											},
+											"reject": {
+												"type": "boolean"
+											},
+											"resubmit": {
+												"type": "boolean"
+											}
+										}
+									},
+									"Bedrijfsnaam": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											},
+											"id": {
+												"type": "string"
+											}
+										}
+									},
+									"$layout_id": {
+										"type": "object",
+										"properties": {
+											"display_label": {
+												"type": "string"
+											},
+											"name": {
+												"type": "string"
+											},
+											"id": {
+												"type": "string"
+											}
+										}
+									},
+									"Name": {
+										"type": "string"
+									},
+									"Last_Activity_Time": {
+										"type": "null"
+									},
+									"Record_Image": {
+										"type": "null"
+									},
+									"$review": {
+										"type": "null"
+									},
+									"$state": {
+										"type": "string"
+									},
+									"Unsubscribed_Mode": {
+										"type": "null"
+									},
+									"$process_flow": {
+										"type": "boolean"
+									},
+									"Exchange_Rate": {
+										"type": "integer"
+									},
+									"Currency": {
+										"type": "string"
+									},
+									"Temp_eigenaar": {
+										"type": "null"
+									},
+									"$locked_for_me": {
+										"type": "boolean"
+									},
+									"id": {
+										"type": "string"
+									},
+									"$approved": {
+										"type": "boolean"
+									},
+									"$approval": {
+										"type": "object",
+										"properties": {
+											"delegate": {
+												"type": "boolean"
+											},
+											"takeover": {
+												"type": "boolean"
+											},
+											"approve": {
+												"type": "boolean"
+											},
+											"reject": {
+												"type": "boolean"
+											},
+											"resubmit": {
+												"type": "boolean"
+											}
+										}
+									},
+									"Modified_Time": {
+										"type": "string"
+									},
+									"Created_Time": {
+										"type": "string"
+									},
+									"Unsubscribed_Time": {
+										"type": "null"
+									},
+									"$editable": {
+										"type": "boolean"
+									},
+									"Time_contract": {
+										"type": "null"
+									},
+									"$orchestration": {
+										"type": "boolean"
+									},
+									"$in_merge": {
+										"type": "boolean"
+									},
+									"Locked__s": {
+										"type": "boolean"
+									},
+									"Type_postbus": {
+										"type": "string"
+									},
+									"Tag": {
+										"type": "array"
+									},
+									"$zia_owner_assignment": {
+										"type": "string"
+									},
+									"$approval_state": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"info": {
+							"type": "object",
+							"properties": {
+								"per_page": {
+									"type": "integer"
+								},
+								"count": {
+									"type": "integer"
+								},
+								"page": {
+									"type": "integer"
+								},
+								"sort_by": {
+									"type": "string"
+								},
+								"sort_order": {
+									"type": "string"
+								},
+								"more_records": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/api_ref_myid')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Api_Call"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "myid.csv",
+						"folderPath": "ref",
+						"fileSystem": "statistics"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "filter",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/api_ref_myid_json')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Api_Call"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "myid.json",
+						"folderPath": "raw",
+						"fileSystem": "statistics"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"filter": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/api_ref_systeemhuis')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Api_Call"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Systeemhuizen.csv",
+						"folderPath": "ref",
+						"fileSystem": "statistics"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Naam",
+						"type": "String"
+					},
+					{
+						"name": "Systeemhuis Prefix",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/api_ref_systeemhuis_json')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Api_Call"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "systeemhuis.json",
+						"folderPath": "raw",
+						"fileSystem": "statistics"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"Naam": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"Systeemhuis Prefix": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/fct_events_export')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Folder": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Exports"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().Folder",
+							"type": "Expression"
+						},
+						"fileSystem": "statistics"
+					},
+					"columnDelimiter": ";",
+					"compressionCodec": null,
+					"compressionLevel": "Optimal",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/fct_events_export_check')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Folder": {
+						"type": "string"
+					},
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Exports"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().Folder",
+							"type": "Expression"
+						},
+						"fileSystem": "statistics"
+					},
+					"columnDelimiter": ";",
+					"compressionCodec": null,
+					"compressionLevel": "Optimal",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/fct_events_export_temp')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Folder": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Exports"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().Folder",
+							"type": "Expression"
+						},
+						"fileSystem": "statistics"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/fct_events_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Folder": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Exports"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().Folder",
+							"type": "Expression"
+						},
+						"fileSystem": "statistics"
+					},
+					"compressionCodec": "gzip"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/fct_zoho_accounts')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Exports"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Zoho_Gegevens.parquet",
+						"folderPath": "final/Zoho",
+						"fileSystem": "statistics"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "KantoorId",
+						"type": "UTF8"
+					},
+					{
+						"name": "Klantsoort",
+						"type": "UTF8"
+					},
+					{
+						"name": "Subkantoor",
+						"type": "UTF8"
+					},
+					{
+						"name": "Huisnummer_toevoeging",
+						"type": "UTF8"
+					},
+					{
+						"name": "Toelichting_verhoging",
+						"type": "UTF8"
+					},
+					{
+						"name": "Created_Time",
+						"type": "UTF8"
+					},
+					{
+						"name": "Klant_EOL_nummer",
+						"type": "UTF8"
+					},
+					{
+						"name": "Straatnaam",
+						"type": "UTF8"
+					},
+					{
+						"name": "Afm_nummer",
+						"type": "UTF8"
+					},
+					{
+						"name": "Kvk_nummer",
+						"type": "UTF8"
+					},
+					{
+						"name": "Aanmelddatum",
+						"type": "UTF8"
+					},
+					{
+						"name": "Einddatum_contract",
+						"type": "UTF8"
+					},
+					{
+						"name": "Status_kantoor",
+						"type": "UTF8"
+					},
+					{
+						"name": "E_mailadres",
+						"type": "UTF8"
+					},
+					{
+						"name": "Account_Name",
+						"type": "UTF8"
+					},
+					{
+						"name": "Woonplaats",
+						"type": "UTF8"
+					},
+					{
+						"name": "Huisnummer",
+						"type": "INT32"
+					},
+					{
+						"name": "Connect_postbus",
+						"type": "UTF8"
+					},
+					{
+						"name": "Contactpersoon_implementatie",
+						"type": "UTF8"
+					},
+					{
+						"name": "GebruikerID",
+						"type": "UTF8"
+					},
+					{
+						"name": "Postcode",
+						"type": "UTF8"
+					},
+					{
+						"name": "Landzone",
+						"type": "UTF8"
+					},
+					{
+						"name": "Type_leverancier",
+						"type": "UTF8"
+					},
+					{
+						"name": "Aplaza_ID",
+						"type": "UTF8"
+					},
+					{
+						"name": "Phone",
+						"type": "UTF8"
+					},
+					{
+						"name": "Hoofdkantoor",
+						"type": "UTF8"
+					},
+					{
+						"name": "Systeemhuis",
+						"type": "UTF8"
+					},
+					{
+						"name": "Type_postbus",
+						"type": "UTF8"
+					},
+					{
+						"name": "Time_contract",
+						"type": "UTF8"
+					},
+					{
+						"name": "Postbus_Nummer",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/fct_zoho_postbussen')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Exports"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Zoho_Gegevens_Postbussen.parquet",
+						"folderPath": "final/Zoho",
+						"fileSystem": "statistics"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/raw_statistiek_ingest')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Exports"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "Transacties",
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Statistieken APLAZA week.xlsx",
+						"folderPath": "raw/ingest",
+						"fileSystem": "statistics"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"name": "EventId",
+						"type": "String"
+					},
+					{
+						"name": "MachineName",
+						"type": "String"
+					},
+					{
+						"name": "Title",
+						"type": "String"
+					},
+					{
+						"name": "TimeStamp",
+						"type": "String"
+					},
+					{
+						"name": "Message",
+						"type": "String"
+					},
+					{
+						"name": "UserIdentity",
+						"type": "String"
+					},
+					{
+						"name": "GimFunction",
+						"type": "String"
+					},
+					{
+						"name": "Week",
+						"type": "String"
+					},
+					{
+						"name": "Year",
+						"type": "String"
+					},
+					{
+						"name": "MyAand",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ref_functies')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Extra Bestanden"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Functies.csv",
+						"folderPath": "ref",
+						"fileSystem": "statistics"
+					},
+					"columnDelimiter": ";",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Code",
+						"type": "String"
+					},
+					{
+						"name": "Functie Soort",
+						"type": "String"
+					},
+					{
+						"name": "FunctieType",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		}
+	]
+}
