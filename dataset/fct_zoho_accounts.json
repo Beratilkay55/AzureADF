@@ -1,0 +1,146 @@
+{
+	"name": "fct_zoho_accounts",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dlsaplazap",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Exports"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Zoho_Gegevens.parquet",
+				"folderPath": "final/Zoho",
+				"fileSystem": "statistics"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "KantoorId",
+				"type": "UTF8"
+			},
+			{
+				"name": "Klantsoort",
+				"type": "UTF8"
+			},
+			{
+				"name": "Subkantoor",
+				"type": "UTF8"
+			},
+			{
+				"name": "Huisnummer_toevoeging",
+				"type": "UTF8"
+			},
+			{
+				"name": "Toelichting_verhoging",
+				"type": "UTF8"
+			},
+			{
+				"name": "Created_Time",
+				"type": "UTF8"
+			},
+			{
+				"name": "Klant_EOL_nummer",
+				"type": "UTF8"
+			},
+			{
+				"name": "Straatnaam",
+				"type": "UTF8"
+			},
+			{
+				"name": "Afm_nummer",
+				"type": "UTF8"
+			},
+			{
+				"name": "Kvk_nummer",
+				"type": "UTF8"
+			},
+			{
+				"name": "Aanmelddatum",
+				"type": "UTF8"
+			},
+			{
+				"name": "Einddatum_contract",
+				"type": "UTF8"
+			},
+			{
+				"name": "Status_kantoor",
+				"type": "UTF8"
+			},
+			{
+				"name": "E_mailadres",
+				"type": "UTF8"
+			},
+			{
+				"name": "Account_Name",
+				"type": "UTF8"
+			},
+			{
+				"name": "Woonplaats",
+				"type": "UTF8"
+			},
+			{
+				"name": "Huisnummer",
+				"type": "INT32"
+			},
+			{
+				"name": "Connect_postbus",
+				"type": "UTF8"
+			},
+			{
+				"name": "Contactpersoon_implementatie",
+				"type": "UTF8"
+			},
+			{
+				"name": "GebruikerID",
+				"type": "UTF8"
+			},
+			{
+				"name": "Postcode",
+				"type": "UTF8"
+			},
+			{
+				"name": "Landzone",
+				"type": "UTF8"
+			},
+			{
+				"name": "Type_leverancier",
+				"type": "UTF8"
+			},
+			{
+				"name": "Aplaza_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "Phone",
+				"type": "UTF8"
+			},
+			{
+				"name": "Hoofdkantoor",
+				"type": "UTF8"
+			},
+			{
+				"name": "Systeemhuis",
+				"type": "UTF8"
+			},
+			{
+				"name": "Type_postbus",
+				"type": "UTF8"
+			},
+			{
+				"name": "Time_contract",
+				"type": "UTF8"
+			},
+			{
+				"name": "Postbus_Nummer",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

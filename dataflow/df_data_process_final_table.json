@@ -1,0 +1,328 @@
+{
+	"name": "df_data_process_final_table",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "stg_events_current",
+						"type": "DatasetReference"
+					},
+					"name": "Hoofdtabel1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ref_verzekeraar",
+						"type": "DatasetReference"
+					},
+					"name": "Verzekeraar"
+				},
+				{
+					"dataset": {
+						"referenceName": "stg_events_current",
+						"type": "DatasetReference"
+					},
+					"name": "Hoofdtabel2"
+				},
+				{
+					"dataset": {
+						"referenceName": "ref_verzekeraar_31",
+						"type": "DatasetReference"
+					},
+					"name": "Verzekeraar31"
+				},
+				{
+					"dataset": {
+						"referenceName": "ref_producten",
+						"type": "DatasetReference"
+					},
+					"name": "Producten"
+				},
+				{
+					"dataset": {
+						"referenceName": "stg_events_current",
+						"type": "DatasetReference"
+					},
+					"name": "Hoofdtabel3"
+				},
+				{
+					"dataset": {
+						"referenceName": "ref_verzekeraar_h742_n741",
+						"type": "DatasetReference"
+					},
+					"name": "VerzekeraarH742N741"
+				},
+				{
+					"dataset": {
+						"referenceName": "ref_functies",
+						"type": "DatasetReference"
+					},
+					"name": "Functies"
+				},
+				{
+					"dataset": {
+						"referenceName": "api_ref_systeemhuis",
+						"type": "DatasetReference"
+					},
+					"name": "Systeemhuis"
+				},
+				{
+					"dataset": {
+						"referenceName": "api_ref_myid",
+						"type": "DatasetReference"
+					},
+					"name": "MyIDFilter"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "fct_events_export",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Niet31"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "Wel31"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "union1"
+				},
+				{
+					"name": "MaatschappijID"
+				},
+				{
+					"name": "H742N741"
+				},
+				{
+					"name": "join5"
+				},
+				{
+					"name": "ProductenJoin"
+				},
+				{
+					"name": "FunctiesJoin"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn5"
+				},
+				{
+					"name": "NieuweKolommen"
+				},
+				{
+					"name": "FilterMessage0"
+				},
+				{
+					"name": "SysteemhuizenJoin"
+				},
+				{
+					"name": "FilterMyID"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     p_week as string",
+				"}",
+				"source(output(",
+				"          event_id as string,",
+				"          user_identity as string,",
+				"          message as string,",
+				"          gim_function as string,",
+				"          gim_function_number as integer,",
+				"          week as integer,",
+				"          jaar as integer,",
+				"          my_aand as string,",
+				"          confirmation_at as string,",
+				"          aplaza_id as string,",
+				"          functie_id as string,",
+				"          my_aand_user as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Hoofdtabel1",
+				"source(output(",
+				"          Code as string,",
+				"          Verzekeraar as string,",
+				"          EOL_Zoho as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Verzekeraar",
+				"source(output(",
+				"          event_id as string,",
+				"          user_identity as string,",
+				"          message as string,",
+				"          gim_function as string,",
+				"          gim_function_number as integer,",
+				"          week as integer,",
+				"          jaar as integer,",
+				"          my_aand as string,",
+				"          confirmation_at as string,",
+				"          aplaza_id as string,",
+				"          functie_id as string,",
+				"          my_aand_user as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Hoofdtabel2",
+				"source(output(",
+				"          Verzekeraar as string,",
+				"          Code as string,",
+				"          maatschappij_ID as string,",
+				"          EOL_Zoho as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Verzekeraar31",
+				"source(output(",
+				"          {Product GIM code} as string,",
+				"          {Product omschrijving} as string,",
+				"          Verzekeraar as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Producten",
+				"source(output(",
+				"          event_id as string,",
+				"          user_identity as string,",
+				"          message as string,",
+				"          gim_function as string,",
+				"          gim_function_number as integer,",
+				"          week as integer,",
+				"          jaar as integer,",
+				"          my_aand as string,",
+				"          confirmation_at as string,",
+				"          aplaza_id as string,",
+				"          functie_id as string,",
+				"          my_aand_user as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Hoofdtabel3",
+				"source(output(",
+				"          Code as string,",
+				"          maatschappij_ID as string,",
+				"          Verzekeraar as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> VerzekeraarH742N741",
+				"source(output(",
+				"          Code as string,",
+				"          {Functie Soort} as string,",
+				"          FunctieType as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Functies",
+				"source(output(",
+				"          Naam as string,",
+				"          {Systeemhuis Prefix} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Systeemhuis",
+				"source(output(",
+				"          filter as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> MyIDFilter",
+				"Hoofdtabel1 filter(gim_function_number != 31,",
+				"     partitionBy('hash', 1)) ~> Niet31",
+				"MaatschappijID, Verzekeraar join(maatschappij_ID == Code,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"Hoofdtabel2 filter(gim_function_number == 31 && my_aand != 'H742' && my_aand != 'N741') ~> Wel31",
+				"Wel31, Verzekeraar31 join(my_aand == Code,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join1, join2, join5 union(byName: true)~> union1",
+				"Niet31 derive(maatschappij_ID = toString(gim_function_number)) ~> MaatschappijID",
+				"Hoofdtabel3 filter(gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741')) ~> H742N741",
+				"H742N741, VerzekeraarH742N741 join(startsWith(my_aand_user, Code),",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'auto')~> join5",
+				"NieuweKolommen, Producten join(middenstuk == {Product GIM code},",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> ProductenJoin",
+				"SysteemhuizenJoin, Functies join(functie_id == Functies@Code,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> FunctiesJoin",
+				"derivedColumn5 select(mapColumn(",
+				"          Systeemhuis = Naam,",
+				"          EventNaam,",
+				"          KantoorId,",
+				"          AplazaId = aplaza_id,",
+				"          MaatschappijId = maatschappij_ID,",
+				"          Verzekeraar = union1@Verzekeraar,",
+				"          Jaar = jaar,",
+				"          Week = week,",
+				"          Message = message,",
+				"          TimeStamp = confirmation_at,",
+				"          GebruikerId,",
+				"          FunctieId = functie_id,",
+				"          Productomschrijving = {Product omschrijving},",
+				"          FunctieSoort = {Functie Soort},",
+				"          FunctieType,",
+				"          KantoorGebruikerId = {KantoorId+GebruikId}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"FilterMessage0 derive({KantoorId+GebruikId} = replace(concat(KantoorId, '_', GebruikerId), '-', '_')) ~> derivedColumn5",
+				"union1 derive(middenstuk = split(gim_function, \".\")[2],",
+				"          KantoorId = split(user_identity, '_')[2],",
+				"          GebruikerId = substring(    user_identity,    locate('_', user_identity, locate('_', user_identity) + 1) + 1),",
+				"          Systeemhuis = split(user_identity, '_')[1],",
+				"          EventNaam = case(    event_id == '43', 'Transacties',    event_id == '45', 'Transacties',    event_id == '49', 'Transacties',    event_id == '73', 'Berichten',    event_id == '74', 'Documenten',    'Onbekend')) ~> NieuweKolommen",
+				"FilterMyID filter(!(",
+				"  (event_id == '73' || event_id == '74')",
+				"  && message == '0'",
+				") && event_id != '43') ~> FilterMessage0",
+				"ProductenJoin, Systeemhuis join(Systeemhuis == {Systeemhuis Prefix},",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> SysteemhuizenJoin",
+				"FunctiesJoin, MyIDFilter exists(maatschappij_ID == filter,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> FilterMyID",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('export_week_', $p_week, '.csv'))],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

@@ -1,0 +1,27 @@
+{
+	"name": "rest_Triggre",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Triggre",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"relativeURL": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Api_Call"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@dataset().relativeUrl",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

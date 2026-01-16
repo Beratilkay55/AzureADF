@@ -1,0 +1,67 @@
+{
+	"name": "raw_statistiek_ingest",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dlsaplazap",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Exports"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Transacties",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Statistieken APLAZA week.xlsx",
+				"folderPath": "raw/ingest",
+				"fileSystem": "statistics"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "EventId",
+				"type": "String"
+			},
+			{
+				"name": "MachineName",
+				"type": "String"
+			},
+			{
+				"name": "Title",
+				"type": "String"
+			},
+			{
+				"name": "TimeStamp",
+				"type": "String"
+			},
+			{
+				"name": "Message",
+				"type": "String"
+			},
+			{
+				"name": "UserIdentity",
+				"type": "String"
+			},
+			{
+				"name": "GimFunction",
+				"type": "String"
+			},
+			{
+				"name": "Week",
+				"type": "String"
+			},
+			{
+				"name": "Year",
+				"type": "String"
+			},
+			{
+				"name": "MyAand",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

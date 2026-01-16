@@ -1,0 +1,34 @@
+{
+	"name": "api_ref_myid_json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dlsaplazap",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Api_Call"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "myid.json",
+				"folderPath": "raw",
+				"fileSystem": "statistics"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"filter": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

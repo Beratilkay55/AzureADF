@@ -1,0 +1,32 @@
+{
+	"name": "fct_events_export_temp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dlsaplazap",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Folder": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Exports"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@dataset().Folder",
+					"type": "Expression"
+				},
+				"fileSystem": "statistics"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

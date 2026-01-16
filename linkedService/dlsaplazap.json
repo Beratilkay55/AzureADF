@@ -1,0 +1,12 @@
+{
+	"name": "dlsaplazap",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "data lake storage connection to data factory",
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://dlsaplazap.dfs.core.windows.net/"
+		}
+	}
+}

@@ -1,0 +1,55 @@
+{
+	"name": "ref_subkantoor",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dlsaplazap",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Extra Bestanden"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Blad1",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Subkantoren.xlsx",
+				"folderPath": "ref",
+				"fileSystem": "statistics"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "kantoorId",
+				"type": "String"
+			},
+			{
+				"name": "GebruikerId",
+				"type": "String"
+			},
+			{
+				"name": "Naam subkantoor",
+				"type": "String"
+			},
+			{
+				"name": "Begindatum",
+				"type": "String"
+			},
+			{
+				"name": "Einddatum",
+				"type": "String"
+			},
+			{
+				"name": "Einddatum is t/m en geldt voor hele kantoor niet voor subkantoor (die wordt met * aangegeven)",
+				"type": "String"
+			},
+			{
+				"name": "Gecontroleerd op dubbele 14-2-2024",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

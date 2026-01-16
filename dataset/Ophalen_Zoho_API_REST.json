@@ -1,0 +1,36 @@
+{
+	"name": "Ophalen_Zoho_API_REST",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ZohoCRM_REST",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"entity": "Accounts"
+			}
+		},
+		"parameters": {
+			"entity": {
+				"type": "string",
+				"defaultValue": "Accounts"
+			}
+		},
+		"folder": {
+			"name": "Zoho"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat(dataset().entity,'?page=', string(variables('page')), '&per_page=200')",
+				"type": "Expression"
+			}
+		},
+		"schema": [],
+		"format": {
+			"type": "JsonFormat",
+			"filePattern": "setOfObjects",
+			"jsonPathDefinition": "$.data"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

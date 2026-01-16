@@ -1,0 +1,212 @@
+{
+	"name": "Zoho_Gegevens_Postbussen",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dlsaplazap",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Zoho"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/zoho_gegevens_postbussen",
+				"fileSystem": "statistics"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"data": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"Owner": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								}
+							},
+							"$currency_symbol": {
+								"type": "string"
+							},
+							"$field_states": {
+								"type": "null"
+							},
+							"$review_process": {
+								"type": "object",
+								"properties": {
+									"approve": {
+										"type": "boolean"
+									},
+									"reject": {
+										"type": "boolean"
+									},
+									"resubmit": {
+										"type": "boolean"
+									}
+								}
+							},
+							"Bedrijfsnaam": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									}
+								}
+							},
+							"$layout_id": {
+								"type": "object",
+								"properties": {
+									"display_label": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									}
+								}
+							},
+							"Name": {
+								"type": "string"
+							},
+							"Last_Activity_Time": {
+								"type": "null"
+							},
+							"Record_Image": {
+								"type": "null"
+							},
+							"$review": {
+								"type": "null"
+							},
+							"$state": {
+								"type": "string"
+							},
+							"Unsubscribed_Mode": {
+								"type": "null"
+							},
+							"$process_flow": {
+								"type": "boolean"
+							},
+							"Exchange_Rate": {
+								"type": "integer"
+							},
+							"Currency": {
+								"type": "string"
+							},
+							"Temp_eigenaar": {
+								"type": "null"
+							},
+							"$locked_for_me": {
+								"type": "boolean"
+							},
+							"id": {
+								"type": "string"
+							},
+							"$approved": {
+								"type": "boolean"
+							},
+							"$approval": {
+								"type": "object",
+								"properties": {
+									"delegate": {
+										"type": "boolean"
+									},
+									"takeover": {
+										"type": "boolean"
+									},
+									"approve": {
+										"type": "boolean"
+									},
+									"reject": {
+										"type": "boolean"
+									},
+									"resubmit": {
+										"type": "boolean"
+									}
+								}
+							},
+							"Modified_Time": {
+								"type": "string"
+							},
+							"Created_Time": {
+								"type": "string"
+							},
+							"Unsubscribed_Time": {
+								"type": "null"
+							},
+							"$editable": {
+								"type": "boolean"
+							},
+							"Time_contract": {
+								"type": "null"
+							},
+							"$orchestration": {
+								"type": "boolean"
+							},
+							"$in_merge": {
+								"type": "boolean"
+							},
+							"Locked__s": {
+								"type": "boolean"
+							},
+							"Type_postbus": {
+								"type": "string"
+							},
+							"Tag": {
+								"type": "array"
+							},
+							"$zia_owner_assignment": {
+								"type": "string"
+							},
+							"$approval_state": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"info": {
+					"type": "object",
+					"properties": {
+						"per_page": {
+							"type": "integer"
+						},
+						"count": {
+							"type": "integer"
+						},
+						"page": {
+							"type": "integer"
+						},
+						"sort_by": {
+							"type": "string"
+						},
+						"sort_order": {
+							"type": "string"
+						},
+						"more_records": {
+							"type": "boolean"
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

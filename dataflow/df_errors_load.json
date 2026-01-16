@@ -1,0 +1,63 @@
+{
+	"name": "df_errors_load",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "stg_firstload_errors",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "fct_events_parquet",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id as integer,",
+				"          event_id as integer,",
+				"          machine_name as string,",
+				"          title as string,",
+				"          message as string,",
+				"          user_identity as string,",
+				"          gim_function as string,",
+				"          week as integer,",
+				"          year as integer,",
+				"          created_at as timestamp,",
+				"          last_modified_at as timestamp,",
+				"          event_at as timestamp,",
+				"          item_id as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> source1",
+				"source1 filter(!startsWith(user_identity, 'Systeem/')) ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     partitionFileNames:[(concat('export_', toString(currentUTC(), 'yyyyMMdd_HHmmss'), '.parquet'))],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

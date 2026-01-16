@@ -1,0 +1,61 @@
+{
+	"name": "df_samenvoegen_zoho_postbussen",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Zoho_Gegevens_Postbussen",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "fct_zoho_postbussen",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "flatten1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          data as (Owner as (name as string, id as string, email as string), {$currency_symbol} as string, {$field_states} as string, {$review_process} as (approve as boolean, reject as boolean, resubmit as boolean), Bedrijfsnaam as (name as string, id as string), {$layout_id} as (display_label as string, name as string, id as string), Name as string, Last_Activity_Time as string, Record_Image as string, {$review} as string, {$state} as string, Unsubscribed_Mode as string, {$process_flow} as boolean, Exchange_Rate as integer, Currency as string, Temp_eigenaar as string, {$locked_for_me} as boolean, id as string, {$approved} as boolean, {$approval} as (delegate as boolean, takeover as boolean, approve as boolean, reject as boolean, resubmit as boolean), Modified_Time as string, Created_Time as string, Unsubscribed_Time as string, {$editable} as boolean, Time_contract as string, {$orchestration} as boolean, {$in_merge} as boolean, Locked__s as boolean, Type_postbus as string, Tag as string[], {$zia_owner_assignment} as string, {$approval_state} as string)[],",
+				"          info as (per_page as integer, count as integer, page as integer, sort_by as string, sort_order as string, more_records as boolean)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> source1",
+				"source1 foldDown(unroll(data),",
+				"     mapColumn(",
+				"          Bedrijfsnaam = data.Bedrijfsnaam,",
+				"          Id = data.Bedrijfsnaam.id,",
+				"          Type_postbus = data.Type_postbus,",
+				"          Postbus_nummer = data.Name,",
+				"          Time_contract = data.Time_contract",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1",
+				"flatten1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     partitionFileNames:['Zoho_Gegevens_Postbussen.parquet'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

@@ -1,0 +1,186 @@
+{
+	"name": "pl_api_call",
+	"properties": {
+		"activities": [
+			{
+				"name": "FilterMyID",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "lab/interfaces/rest/dwhFilters/dwhFilters"
+					},
+					{
+						"name": "Destination",
+						"value": "statistics/api/run.json"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "POST",
+						"requestBody": "{\n  \"apikey\": \"+SjtTqVK5IJPiZBSJEFEY+L12bPAaGkvhqBcVEueCHw=\",\n  \"type\": \"KantoorId\"\n}",
+						"additionalHeaders": {
+							"Content-Type": "application/json"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "filter"
+								},
+								"sink": {
+									"name": "items"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "rest_Triggre",
+						"type": "DatasetReference",
+						"parameters": {
+							"relativeURL": "lab/interfaces/rest/dwhFilters/dwhFilters"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "api_ref_myid_json",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Systeemhuizen",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "FilterMyID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "lab/interfaces/rest/dwhFilters/dwhFilters"
+					},
+					{
+						"name": "Destination",
+						"value": "statistics/api/run.json"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "POST",
+						"requestBody": "{\n  \"apikey\": \"+SjtTqVK5IJPiZBSJEFEY+L12bPAaGkvhqBcVEueCHw=\"\n}",
+						"additionalHeaders": {
+							"Content-Type": "application/json"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "rest_Triggre",
+						"type": "DatasetReference",
+						"parameters": {
+							"relativeURL": "lab/interfaces/rest/systeemhuisMapping/systeemhuisMapping"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "api_ref_systeemhuis_json",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Systeemhuizen",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_flatten_api",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"variables": {
+			"WebOutput": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-01-07T11:23:17Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,82 @@
+{
+	"name": "stg_events_current_temp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dlsaplazap",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FileName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Exports"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
+				"folderPath": "staging",
+				"fileSystem": "statistics"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "event_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "message",
+				"type": "INT64"
+			},
+			{
+				"name": "user_identity",
+				"type": "UTF8"
+			},
+			{
+				"name": "gim_function",
+				"type": "UTF8"
+			},
+			{
+				"name": "gim_function_number",
+				"type": "INT32"
+			},
+			{
+				"name": "week",
+				"type": "INT32"
+			},
+			{
+				"name": "jaar",
+				"type": "INT32"
+			},
+			{
+				"name": "my_aand",
+				"type": "UTF8"
+			},
+			{
+				"name": "confirmation_at",
+				"type": "INT96"
+			},
+			{
+				"name": "aplaza_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "functie_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "my_aand_user",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

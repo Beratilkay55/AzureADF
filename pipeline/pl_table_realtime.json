@@ -1,0 +1,532 @@
+{
+	"name": "pl_table_realtime",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Verwijder Tijdelijk Parquet",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzurePostgreSql1",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "CREATE OR REPLACE VIEW public.vw_aplaza_all AS\nWITH base AS (\n  SELECT\n    v.event_id,\n    CASE\n      WHEN v.Message_txt IS NOT NULL\n       AND NULLIF(btrim(v.Message_txt), '') ~ '^[+-]?[0-9]+$'\n        THEN (NULLIF(btrim(v.Message_txt), ''))::bigint\n      ELSE NULL\n    END AS Message,\n    v.user_identity,\n    v.gim_function,\n    COALESCE(\n      v.gim_function_number, \n      CASE\n        WHEN split_part(v.gim_function, '.', 1) ~ '^[0-9]+$'\n          THEN split_part(v.gim_function, '.', 1)::int\n        ELSE NULL\n      END\n    ) AS gim_function_number,\n    v.week,\n    v.jaar,\n    v.my_aand,\n    v.confirmation_at,\n    COALESCE(NULLIF(r.aplaza_id, ''), r.role_group_aplaza_id) AS aplaza_id\n  FROM (\n    -- file_results: confirmation_at + 1 hours\n    SELECT\n      event_id::text                AS event_id,\n      Message::text                 AS Message_txt,\n      user_identity::text           AS user_identity,\n      gim_function::text            AS gim_function,\n      NULL::int                     AS gim_function_number, \n      week::int                     AS week,\n      year::int                     AS jaar,\n      my_aand::text                 AS my_aand,\n      (confirmation_at + interval '1 hours')::timestamptz AS confirmation_at\n    FROM statistics.file_results\n    WHERE confirmation_at IS NOT NULL\n\n    UNION ALL\n\n    -- transactions: event_at -> confirmation_at + 1 hours\n    SELECT\n      event_id::text                AS event_id,\n      NULL::text                    AS Message_txt,\n      user_identity::text           AS user_identity,\n      gim_function::text            AS gim_function,\n      CASE\n        WHEN split_part(gim_function, '.', 1) ~ '^[0-9]+$'\n          THEN split_part(gim_function, '.', 1)::int\n        ELSE NULL\n      END                           AS gim_function_number,\n      week::int                     AS week,\n      year::int                     AS jaar,\n      NULL::text                    AS my_aand,\n      (event_at + interval '1 hours')::timestamptz AS confirmation_at\n    FROM statistics.transactions\n    WHERE event_at IS NOT NULL\n  ) v\n  LEFT JOIN usermgmt.v_get_aplaza_ids r\n    ON lower(trim(v.user_identity)) = lower(trim(r.username))\n)\nSELECT\n  b.*,\n  (\n    (regexp_split_to_array(b.gim_function, '\\.'))[\n      array_length(regexp_split_to_array(b.gim_function, '\\.'), 1) - 1\n    ]\n    || '.' ||\n    (regexp_split_to_array(b.gim_function, '\\.'))[\n      array_length(regexp_split_to_array(b.gim_function, '\\.'), 1)\n    ]\n  ) AS functie_id,\n  CASE \n    WHEN b.my_aand IN ('N741','H742') \n      THEN b.my_aand || '_' || b.user_identity\n    ELSE NULL\n  END AS my_aand_user\nFROM base AS b\nWHERE b.event_id IS NOT NULL\n  AND (b.user_identity IS NULL OR b.user_identity NOT LIKE 'EZAPP%')\n  AND NOT (b.event_id IN ('73','74') AND b.Message = 0)\n  AND (\n    b.event_id <> '45'\n    OR (regexp_split_to_array(b.gim_function, '\\.'))[3] = '300'\n  );\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Set variable4",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('weeksToCheck')",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Get Metadata1",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "fct_events_export_check",
+									"type": "DatasetReference",
+									"parameters": {
+										"Folder": "final/Statistieken/year=2026",
+										"FileName": {
+											"value": "@concat('export_week_', string(item()), '.csv')",
+											"type": "Expression"
+										}
+									}
+								},
+								"fieldList": [
+									"exists"
+								],
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						},
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "Get Metadata1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@not(activity('Get Metadata1').output.exists)\n",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "Copy data1",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzurePostgreSqlSource",
+												"query": {
+													"value": "@concat(\n  'SELECT * ',\n  'FROM public.vw_aplaza_all ',\n  'WHERE week = ', string(item()),\n  ' AND jaar = 2026;'\n)\n",
+													"type": "Expression"
+												},
+												"partitionOption": "None",
+												"queryTimeout": "02:00:00"
+											},
+											"sink": {
+												"type": "ParquetSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "ParquetWriteSettings"
+												}
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "fct_events_sql",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "stg_events_current_temp",
+												"type": "DatasetReference",
+												"parameters": {
+													"FileName": {
+														"value": "@concat('week_', string(item()), '.parquet')",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "Set variable5",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "Copy data1",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "hasNewWeeks",
+											"value": {
+												"value": "@bool('true')\n",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Set CurrentWeek",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Script_GetWeek",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "currentWeek",
+					"value": {
+						"value": "@int(activity('Script_GetWeek').output.resultSets[0].rows[0].current_week)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set WeekCounter",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable3",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "weekCounter",
+					"value": 1
+				}
+			},
+			{
+				"name": "Until1",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "Set WeekCounter",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(variables('weekCounter'), variables('currentWeek'))\n",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Append variable1",
+							"type": "AppendVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "weeksToCheck",
+								"value": {
+									"value": "@variables('weekCounter')",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Append variable1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "weekCounterNext",
+								"value": {
+									"value": "@add(variables('weekCounter'), 1)\n",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set variable2",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Set variable1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "weekCounter",
+								"value": {
+									"value": "@variables('weekCounterNext')",
+									"type": "Expression"
+								}
+							}
+						}
+					],
+					"timeout": "0.12:00:00"
+				}
+			},
+			{
+				"name": "Set variable3",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set CurrentWeek",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "weeksToCheck",
+					"value": {
+						"value": "@json('[]')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable4",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Until1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "hasNewWeeks",
+					"value": {
+						"value": "@bool('false')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Script_GetWeek",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzurePostgreSql1",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "SELECT EXTRACT(WEEK FROM (NOW() AT TIME ZONE 'UTC'))::int AS current_week;"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Data_Process",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_data_process_final_table_real_time",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"sink1": {
+								"Folder": {
+									"value": "@concat( 'final/Statistieken/Temp')",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Verwijder Tijdelijk Parquet",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Verwijder Tijdelijk Staging",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "fct_events_export_temp",
+						"type": "DatasetReference",
+						"parameters": {
+							"Folder": "@concat( 'final/Statistieken/Temp')"
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Verwijder Tijdelijk Staging",
+				"type": "Delete",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "stg_events_current_temp_inlezen",
+						"type": "DatasetReference"
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			}
+		],
+		"variables": {
+			"currentWeek": {
+				"type": "Integer"
+			},
+			"weeksToCheck": {
+				"type": "Array"
+			},
+			"weekCounter": {
+				"type": "Integer"
+			},
+			"weekCounterNext": {
+				"type": "Integer"
+			},
+			"hasNewWeeks": {
+				"type": "Boolean"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-01-15T14:00:08Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

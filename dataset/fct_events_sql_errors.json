@@ -1,0 +1,105 @@
+{
+	"name": "fct_events_sql_errors",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzurePostgreSql1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Main table"
+		},
+		"annotations": [],
+		"type": "AzurePostgreSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "text",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "gim_object_id",
+				"type": "text",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "event_id",
+				"type": "text",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "message",
+				"type": "text",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "user_identity",
+				"type": "text",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "gim_function",
+				"type": "text",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "gim_function_number",
+				"type": "integer",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "week",
+				"type": "integer",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "jaar",
+				"type": "integer",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "my_aand",
+				"type": "text",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "last_modified_at",
+				"type": "timestamp with time zone",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "created_at",
+				"type": "timestamp with time zone",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "source",
+				"type": "text",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "aplaza_id",
+				"type": "text",
+				"precision": 0,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "statistics",
+			"table": "exceptions"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

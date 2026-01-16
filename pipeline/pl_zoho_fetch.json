@@ -1,0 +1,319 @@
+{
+	"name": "pl_zoho_fetch",
+	"properties": {
+		"activities": [
+			{
+				"name": "access_token",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					"url": "https://accounts.zoho.eu/oauth/v2/token",
+					"body": "client_id=1000.H7AXV6PG197Q4XA3WDGC1PSVBUIOCX&client_secret=02a75a54614ee025d583a6cad09a463579f2c20b1b&refresh_token=1000.042d3217d39b8f731a388c46f668be22.1c5987b6f8f65c5f3e4d55f684fe23dc&grant_type=refresh_token"
+				}
+			},
+			{
+				"name": "Until",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "access_token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(variables('continueLoop'), false)\n",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Fetch_Data",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.010",
+									"requestMethod": "GET",
+									"additionalHeaders": {
+										"Authorization": {
+											"value": "@concat('Bearer ', activity('access_token').output.access_token)",
+											"type": "Expression"
+										},
+										"Accept": "application/json"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings",
+										"fileName": "@concat('Zoho_Data_Page_', string(variables('page')), '.json')",
+										"copyBehavior": "FlattenHierarchy"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings",
+										"filePattern": "singleDocument"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "Ophalen_Zoho_API_REST",
+									"type": "DatasetReference",
+									"parameters": {
+										"entity": "Accounts"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Zoho_Gegevens",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "ContinueLoop",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Fetch_Data",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "continueLoop",
+								"value": {
+									"value": "@greater(activity('Fetch_Data').output.rowsRead, 0)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "VolgendePagina",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "ContinueLoop",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "tempPage",
+								"value": {
+									"value": "@add(variables('page'), 1)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Page",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "VolgendePagina",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "page",
+								"value": {
+									"value": "@variables('tempPage')  \n",
+									"type": "Expression"
+								}
+							}
+						}
+					],
+					"timeout": "0.12:00:00"
+				}
+			},
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Until",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_samenvoegen_zoho",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Delete1",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Data flow1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Zoho_Gegevens",
+						"type": "DatasetReference"
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Delete1_copy1",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Delete1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Zoho_Gegevens_Postbussen",
+						"type": "DatasetReference"
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Fetch_Zoho_Data_Postbussen",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"variables": {
+			"continueLoop": {
+				"type": "Boolean",
+				"defaultValue": true
+			},
+			"tempPage": {
+				"type": "Integer"
+			},
+			"page": {
+				"type": "Integer",
+				"defaultValue": 1
+			},
+			"page2": {
+				"type": "Integer",
+				"defaultValue": 1
+			},
+			"tempPage2": {
+				"type": "Integer"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-24T11:28:20Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

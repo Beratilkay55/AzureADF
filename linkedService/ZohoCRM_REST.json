@@ -1,0 +1,19 @@
+{
+	"name": "ZohoCRM_REST",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"entity": {
+				"type": "string",
+				"defaultValue": "Accounts"
+			}
+		},
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://www.zohoapis.eu/crm/v2/",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}

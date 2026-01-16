@@ -1,0 +1,40 @@
+{
+	"name": "api_ref_systeemhuis_json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dlsaplazap",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Api_Call"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "systeemhuis.json",
+				"folderPath": "raw",
+				"fileSystem": "statistics"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"Naam": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"Systeemhuis Prefix": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

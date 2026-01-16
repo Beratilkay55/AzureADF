@@ -1,0 +1,478 @@
+{
+	"name": "Zoho_Gegevens",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dlsaplazap",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Zoho"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/zoho_gegevens",
+				"fileSystem": "statistics"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"data": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"Achternaam_Contactpersoon": {
+								"type": "null"
+							},
+							"Systeemhuispakket_Oud": {
+								"type": "null"
+							},
+							"Owner": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								}
+							},
+							"KantoorId_Statistieken": {
+								"type": "string"
+							},
+							"Sales_status": {
+								"type": "null"
+							},
+							"$field_states": {
+								"type": "null"
+							},
+							"Contractsoort": {
+								"type": "null"
+							},
+							"Producten_aan_te_sluiten": {
+								"type": "array"
+							},
+							"Klantsoort": {
+								"type": "null"
+							},
+							"$state": {
+								"type": "string"
+							},
+							"$process_flow": {
+								"type": "boolean"
+							},
+							"Currency": {
+								"type": "string"
+							},
+							"Subkantoor": {
+								"type": "string"
+							},
+							"Huisnummer_toevoeging": {
+								"type": "null"
+							},
+							"Backoffice_systeem": {
+								"type": "null"
+							},
+							"id": {
+								"type": "string"
+							},
+							"Toelichting_verhoging": {
+								"type": "null"
+							},
+							"$approval": {
+								"type": "object",
+								"properties": {
+									"delegate": {
+										"type": "boolean"
+									},
+									"takeover": {
+										"type": "boolean"
+									},
+									"approve": {
+										"type": "boolean"
+									},
+									"reject": {
+										"type": "boolean"
+									},
+									"resubmit": {
+										"type": "boolean"
+									}
+								}
+							},
+							"Naam_softwarepakket": {
+								"type": "null"
+							},
+							"Created_Time": {
+								"type": "string"
+							},
+							"Klant_EOL_nummer": {
+								"type": "null"
+							},
+							"E_mail_paspoort": {
+								"type": "string"
+							},
+							"Betaling_jaarlijks_ineens": {
+								"type": "null"
+							},
+							"ADN_berichten_via_Aplaza_J_N": {
+								"type": "string"
+							},
+							"Straatnaam": {
+								"type": "string"
+							},
+							"AFM_nummer": {
+								"type": "string"
+							},
+							"Contactpersoon_Aplaza": {
+								"type": "null"
+							},
+							"Komend_overleg": {
+								"type": "null"
+							},
+							"Financi_le_afspraken": {
+								"type": "array"
+							},
+							"Reden_status_Niet_Afgerond": {
+								"type": "null"
+							},
+							"KvK_nummer": {
+								"type": "string"
+							},
+							"$review_process": {
+								"type": "object",
+								"properties": {
+									"approve": {
+										"type": "boolean"
+									},
+									"reject": {
+										"type": "boolean"
+									},
+									"resubmit": {
+										"type": "boolean"
+									}
+								}
+							},
+							"Overgenomen_door": {
+								"type": "null"
+							},
+							"Jaarcontractwaarde_ACV": {
+								"type": "null"
+							},
+							"Aanmelddatum": {
+								"type": "string"
+							},
+							"Implementatiedoel": {
+								"type": "null"
+							},
+							"Record_Image": {
+								"type": "null"
+							},
+							"Einddatum_contract": {
+								"type": "null"
+							},
+							"Status_kantoor": {
+								"type": "string"
+							},
+							"E_mailadres": {
+								"type": "string"
+							},
+							"Account_Name": {
+								"type": "string"
+							},
+							"Woonplaats": {
+								"type": "string"
+							},
+							"Datum_status": {
+								"type": "string"
+							},
+							"Prospectindicator": {
+								"type": "null"
+							},
+							"Huisnummer": {
+								"type": "integer"
+							},
+							"Soort_contract": {
+								"type": "null"
+							},
+							"Productlines": {
+								"type": "array"
+							},
+							"Verwerkersovereenkomst_ondertekend": {
+								"type": "null"
+							},
+							"$orchestration": {
+								"type": "boolean"
+							},
+							"Datum_facturatie": {
+								"type": "null"
+							},
+							"Eenmalig_Termijn_2": {
+								"type": "null"
+							},
+							"Connect_postbus": {
+								"type": "null"
+							},
+							"Eenmalig_Termijn_1": {
+								"type": "null"
+							},
+							"Moederbedrijf": {
+								"type": "null"
+							},
+							"Layout": {
+								"type": "object",
+								"properties": {
+									"display_label": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									}
+								}
+							},
+							"Aplaza_Producten1": {
+								"type": "array"
+							},
+							"Locked__s": {
+								"type": "boolean"
+							},
+							"Tag": {
+								"type": "array"
+							},
+							"$currency_symbol": {
+								"type": "string"
+							},
+							"ADN_postbusnummer": {
+								"type": "string"
+							},
+							"Reden_contractwijziging_klant": {
+								"type": "null"
+							},
+							"Contactpersoon_implementatie": {
+								"type": "null"
+							},
+							"ALV": {
+								"type": "null"
+							},
+							"Intermediairs_aan_te_sluiten": {
+								"type": "null"
+							},
+							"Implementatiestatus": {
+								"type": "null"
+							},
+							"Last_Activity_Time": {
+								"type": "string"
+							},
+							"Exchange_Rate": {
+								"type": "integer"
+							},
+							"$locked_for_me": {
+								"type": "boolean"
+							},
+							"Aanhef_Contactpersoon": {
+								"type": "null"
+							},
+							"$approved": {
+								"type": "boolean"
+							},
+							"Productlines_aan_te_sluiten": {
+								"type": "array"
+							},
+							"GebruikerId": {
+								"type": "string"
+							},
+							"$editable": {
+								"type": "boolean"
+							},
+							"Datum_Termijn_21": {
+								"type": "null"
+							},
+							"Postcode": {
+								"type": "string"
+							},
+							"E_mailadres_datalekken": {
+								"type": "null"
+							},
+							"Landzone": {
+								"type": "null"
+							},
+							"Categorie_indeling": {
+								"type": "null"
+							},
+							"Relatienummer_systeemhuis": {
+								"type": "null"
+							},
+							"Bijdrage_variabel": {
+								"type": "null"
+							},
+							"E_mailadres_contactpersoon2": {
+								"type": "null"
+							},
+							"kantoorId_statistieken_oud": {
+								"type": "null"
+							},
+							"$zia_owner_assignment": {
+								"type": "string"
+							},
+							"$is_duplicate": {
+								"type": "boolean"
+							},
+							"Type_leverancier": {
+								"type": "null"
+							},
+							"Weging_Doc_Ber": {
+								"type": "null"
+							},
+							"Aplaza_ID": {
+								"type": "string"
+							},
+							"Datum_overstap": {
+								"type": "null"
+							},
+							"Implementatiesoort": {
+								"type": "null"
+							},
+							"DORA_addendum": {
+								"type": "null"
+							},
+							"Contract_ondertekend": {
+								"type": "null"
+							},
+							"Bron_suspect_prospect": {
+								"type": "null"
+							},
+							"$layout_id": {
+								"type": "object",
+								"properties": {
+									"display_label": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									}
+								}
+							},
+							"Intermediairs_aangesloten": {
+								"type": "null"
+							},
+							"Laatste_overleg": {
+								"type": "null"
+							},
+							"Datum_Termijn_11": {
+								"type": "null"
+							},
+							"$review": {
+								"type": "null"
+							},
+							"Reden_status_Vertrokken": {
+								"type": "null"
+							},
+							"Phone": {
+								"type": "string"
+							},
+							"Verwerkersovk_versienummer": {
+								"type": "null"
+							},
+							"Telefoon_contactpersoon": {
+								"type": "null"
+							},
+							"Offerte_contract_versienummer": {
+								"type": "null"
+							},
+							"Alternatieve_Naam": {
+								"type": "null"
+							},
+							"Plannen_in": {
+								"type": "null"
+							},
+							"Moeder_EOL_nummer": {
+								"type": "null"
+							},
+							"Modified_Time": {
+								"type": "string"
+							},
+							"Voornaam_Contactpersoon": {
+								"type": "null"
+							},
+							"Landc": {
+								"type": "null"
+							},
+							"Frequentie": {
+								"type": "null"
+							},
+							"Hoofdkantoor": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									}
+								}
+							},
+							"Systeemhuis_overig": {
+								"type": "null"
+							},
+							"Contactpersoon_Partner": {
+								"type": "null"
+							},
+							"Gebruikt_Solera_ABZ": {
+								"type": "null"
+							},
+							"$in_merge": {
+								"type": "boolean"
+							},
+							"Verhoging": {
+								"type": "array"
+							},
+							"$approval_state": {
+								"type": "string"
+							},
+							"Systeemhuis": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"info": {
+					"type": "object",
+					"properties": {
+						"per_page": {
+							"type": "integer"
+						},
+						"count": {
+							"type": "integer"
+						},
+						"page": {
+							"type": "integer"
+						},
+						"sort_by": {
+							"type": "string"
+						},
+						"sort_order": {
+							"type": "string"
+						},
+						"more_records": {
+							"type": "boolean"
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

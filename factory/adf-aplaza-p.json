@@ -1,0 +1,9 @@
+{
+	"name": "adf-aplaza-p",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "934be180-e88a-4d02-b201-4189f2de36aa",
+		"tenantId": "e4c94ed8-0835-4af0-901f-efee96ef30aa"
+	}
+}

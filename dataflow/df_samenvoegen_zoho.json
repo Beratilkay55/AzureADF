@@ -1,0 +1,200 @@
+{
+	"name": "df_samenvoegen_zoho",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Zoho_Gegevens",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "Zoho_Gegevens_Postbussen",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "fct_zoho_accounts",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "flatten1"
+				},
+				{
+					"name": "flatten2"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          data as (Achternaam_Contactpersoon as string, Systeemhuispakket_Oud as string, Owner as (name as string, id as string, email as string), KantoorId_Statistieken as string, Sales_status as string, {$field_states} as string, Contractsoort as string, Producten_aan_te_sluiten as string[], Klantsoort as string, {$state} as string, {$process_flow} as boolean, Currency as string, Subkantoor as string, Huisnummer_toevoeging as string, Backoffice_systeem as string, id as string, Toelichting_verhoging as string, {$approval} as (delegate as boolean, takeover as boolean, approve as boolean, reject as boolean, resubmit as boolean), Naam_softwarepakket as string, Created_Time as string, Klant_EOL_nummer as string, E_mail_paspoort as string, Betaling_jaarlijks_ineens as string, ADN_berichten_via_Aplaza_J_N as string, Straatnaam as string, AFM_nummer as string, Contactpersoon_Aplaza as string, Komend_overleg as string, Financi_le_afspraken as string[], Reden_status_Niet_Afgerond as string, KvK_nummer as string, {$review_process} as (approve as boolean, reject as boolean, resubmit as boolean), Overgenomen_door as string, Jaarcontractwaarde_ACV as string, Aanmelddatum as string, Implementatiedoel as string, Record_Image as string, Einddatum_contract as string, Status_kantoor as string, E_mailadres as string, Account_Name as string, Woonplaats as string, Datum_status as string, Prospectindicator as string, Huisnummer as integer, Soort_contract as string, Productlines as string[], Verwerkersovereenkomst_ondertekend as string, {$orchestration} as boolean, Datum_facturatie as string, Eenmalig_Termijn_2 as string, Connect_postbus as string, Eenmalig_Termijn_1 as string, Moederbedrijf as string, Layout as (display_label as string, name as string, id as string), Aplaza_Producten1 as string[], Locked__s as boolean, Tag as string[], {$currency_symbol} as string, ADN_postbusnummer as string, Reden_contractwijziging_klant as string, Contactpersoon_implementatie as string, ALV as string, Intermediairs_aan_te_sluiten as string, Implementatiestatus as string, Last_Activity_Time as string, Exchange_Rate as integer, {$locked_for_me} as boolean, Aanhef_Contactpersoon as string, {$approved} as boolean, Productlines_aan_te_sluiten as string[], GebruikerId as string, {$editable} as boolean, Datum_Termijn_21 as string, Postcode as string, E_mailadres_datalekken as string, Landzone as string, Categorie_indeling as string, Relatienummer_systeemhuis as string, Bijdrage_variabel as string, E_mailadres_contactpersoon2 as string, kantoorId_statistieken_oud as string, {$zia_owner_assignment} as string, {$is_duplicate} as boolean, Type_leverancier as string, Weging_Doc_Ber as string, Aplaza_ID as string, Datum_overstap as string, Implementatiesoort as string, DORA_addendum as string, Contract_ondertekend as string, Bron_suspect_prospect as string, {$layout_id} as (display_label as string, name as string, id as string), Intermediairs_aangesloten as string, Laatste_overleg as string, Datum_Termijn_11 as string, {$review} as string, Reden_status_Vertrokken as string, Phone as string, Verwerkersovk_versienummer as string, Telefoon_contactpersoon as string, Offerte_contract_versienummer as string, Alternatieve_Naam as string, Plannen_in as string, Moeder_EOL_nummer as string, Modified_Time as string, Voornaam_Contactpersoon as string, Landc as string, Frequentie as string, Hoofdkantoor as (name as string, id as string), Systeemhuis_overig as string, Contactpersoon_Partner as string, Gebruikt_Solera_ABZ as string, {$in_merge} as boolean, Verhoging as string[], {$approval_state} as string, Systeemhuis as string)[],",
+				"          info as (per_page as integer, count as integer, page as integer, sort_by as string, sort_order as string, more_records as boolean)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> source1",
+				"source(output(",
+				"          data as (Owner as (name as string, id as string, email as string), {$currency_symbol} as string, {$field_states} as string, {$review_process} as (approve as boolean, reject as boolean, resubmit as boolean), Bedrijfsnaam as (name as string, id as string), {$layout_id} as (display_label as string, name as string, id as string), Name as string, Last_Activity_Time as string, Record_Image as string, {$review} as string, {$state} as string, Unsubscribed_Mode as string, {$process_flow} as boolean, Exchange_Rate as integer, Currency as string, Temp_eigenaar as string, {$locked_for_me} as boolean, id as string, {$approved} as boolean, {$approval} as (delegate as boolean, takeover as boolean, approve as boolean, reject as boolean, resubmit as boolean), Modified_Time as string, Created_Time as string, Unsubscribed_Time as string, {$editable} as boolean, Time_contract as string, {$orchestration} as boolean, {$in_merge} as boolean, Locked__s as boolean, Type_postbus as string, Tag as string[], {$zia_owner_assignment} as string, {$approval_state} as string)[],",
+				"          info as (per_page as integer, count as integer, page as integer, sort_by as string, sort_order as string, more_records as boolean)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> source2",
+				"source1 foldDown(unroll(data),",
+				"     mapColumn(",
+				"          KantoorId = data.KantoorId_Statistieken,",
+				"          Systeemhuis = data.Systeemhuis,",
+				"          Account_Name = data.Account_Name,",
+				"          Klantsoort = data.Klantsoort,",
+				"          Subkantoor = data.Subkantoor,",
+				"          Huisnummer_toevoeging = data.Huisnummer_toevoeging,",
+				"          Toelichting_verhoging = data.Toelichting_verhoging,",
+				"          Created_Time = data.Created_Time,",
+				"          Klant_EOL_nummer = data.Klant_EOL_nummer,",
+				"          Straatnaam = data.Straatnaam,",
+				"          Afm_nummer = data.AFM_nummer,",
+				"          Kvk_nummer = data.KvK_nummer,",
+				"          Aanmelddatum = data.Aanmelddatum,",
+				"          Einddatum_contract = data.Einddatum_contract,",
+				"          Status_kantoor = data.Status_kantoor,",
+				"          E_mailadres = data.E_mailadres,",
+				"          Account_Name = data.Account_Name,",
+				"          Woonplaats = data.Woonplaats,",
+				"          Huisnummer = data.Huisnummer,",
+				"          Connect_postbus = data.Connect_postbus,",
+				"          Contactpersoon_implementatie = data.Contactpersoon_implementatie,",
+				"          GebruikerID = data.GebruikerId,",
+				"          Postcode = data.Postcode,",
+				"          Landzone = data.Landzone,",
+				"          Type_leverancier = data.Type_leverancier,",
+				"          Aplaza_ID = data.Aplaza_ID,",
+				"          Phone = data.Phone,",
+				"          Hoofdkantoor = data.Hoofdkantoor.name,",
+				"          Systeemhuis = data.Systeemhuis,",
+				"          id = data.id,",
+				"          Reden_status_Vertrokken = data.Reden_status_Vertrokken,",
+				"          Datum_status = data.Datum_status,",
+				"          Reden_status_Niet_Afgerond = data.Reden_status_Niet_Afgerond",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> flatten1",
+				"source2 foldDown(unroll(data),",
+				"     mapColumn(",
+				"          Id = data.Bedrijfsnaam.id,",
+				"          Type_postbus = data.Type_postbus,",
+				"          Time_contract = data.Time_contract,",
+				"          Postbus_Nummer = data.Name",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten2",
+				"flatten1, aggregate1 join(flatten1@id == aggregate1@Id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          Straatnaam,",
+				"          Bedrijfsnaam = Account_Name,",
+				"          Afm_nummer,",
+				"          Kvk_nummer,",
+				"          Aanmelddatum,",
+				"          Einddatum_contract,",
+				"          Status_kantoor,",
+				"          E_mailadres,",
+				"          Account_Name,",
+				"          Woonplaats,",
+				"          Huisnummer,",
+				"          Connect_postbus,",
+				"          Postcode,",
+				"          Aplaza_ID,",
+				"          Phone,",
+				"          Hoofdkantoor,",
+				"          Time_contract = EMS_Time_Contract,",
+				"          EMS_Postbusnummer,",
+				"          Connect_Postbusnummer,",
+				"          Reden_status_Vertrokken,",
+				"          Datum_status,",
+				"          Systeemhuis,",
+				"          Reden_status_Niet_Afgerond",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"flatten2 derive(EMS_Postbusnummer = iif(Type_postbus == 'EMS', Postbus_Nummer, ''),",
+				"          Connect_Postbusnummer = iif(Type_postbus == 'Connect', Postbus_Nummer, ''),",
+				"          EMS_Time_Contract = iif(Type_postbus == 'EMS', Time_contract, '')) ~> derivedColumn1",
+				"derivedColumn1 aggregate(groupBy(Id),",
+				"     EMS_Postbusnummer = max(EMS_Postbusnummer),",
+				"          Connect_Postbusnummer = max(Connect_Postbusnummer),",
+				"          EMS_Time_Contract = max(EMS_Time_Contract)) ~> aggregate1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          KantoorId as string,",
+				"          Klantsoort as string,",
+				"          Subkantoor as string,",
+				"          Huisnummer_toevoeging as string,",
+				"          Toelichting_verhoging as string,",
+				"          Created_Time as string,",
+				"          Klant_EOL_nummer as string,",
+				"          Straatnaam as string,",
+				"          Afm_nummer as string,",
+				"          Kvk_nummer as string,",
+				"          Aanmelddatum as string,",
+				"          Einddatum_contract as string,",
+				"          Status_kantoor as string,",
+				"          E_mailadres as string,",
+				"          Account_Name as string,",
+				"          Woonplaats as string,",
+				"          Huisnummer as integer,",
+				"          Connect_postbus as string,",
+				"          Contactpersoon_implementatie as string,",
+				"          GebruikerID as string,",
+				"          Postcode as string,",
+				"          Landzone as string,",
+				"          Type_leverancier as string,",
+				"          Aplaza_ID as string,",
+				"          Phone as string,",
+				"          Hoofdkantoor as string,",
+				"          Systeemhuis as string,",
+				"          Type_postbus as string,",
+				"          Time_contract as string,",
+				"          Postbus_Nummer as string",
+				"     ),",
+				"     format: 'parquet',",
+				"     partitionFileNames:['Zoho_Gegevens.parquet'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     partitionBy('hash', 1)) ~> sink2"
+			]
+		}
+	}
+}
