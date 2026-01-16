@@ -13,8 +13,8 @@
 		],
 		"type": "BlobEventsTrigger",
 		"typeProperties": {
-			"blobPathBeginsWith": "/statistics/blobs/raw",
-			"blobPathEndsWith": "ingest",
+			"blobPathBeginsWith": "/statistics/blobs/raw/ingest",
+			"blobPathEndsWith": ".xlsx",
 			"ignoreEmptyBlobs": true,
 			"scope": "/subscriptions/c9f8e306-962f-4818-978b-7ff3187cf577/resourceGroups/rg-aplaza-p-data/providers/Microsoft.Storage/storageAccounts/dlsaplazap",
 			"events": [
