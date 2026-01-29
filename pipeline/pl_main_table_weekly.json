@@ -34,7 +34,7 @@
 						"datasetParameters": {
 							"sink1": {
 								"Folder": {
-									"value": "@concat( 'final/Statistieken/', 'year=', formatDateTime(convertFromUtc(utcNow(),'W. Europe Standard Time'),'yyyy'))",
+									"value": "@concat( 'staging/StatistiekenCSV/', 'year=', formatDateTime(convertFromUtc(utcNow(),'W. Europe Standard Time'),'yyyy'))",
 									"type": "Expression"
 								}
 							}
