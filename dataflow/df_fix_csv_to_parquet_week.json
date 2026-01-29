@@ -59,7 +59,7 @@
 				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
-				"     partitionFileNames:['$p_outFile'],",
+				"     partitionFileNames:[($p_outFile)],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
