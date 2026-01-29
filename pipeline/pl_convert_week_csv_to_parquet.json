@@ -215,7 +215,11 @@
 												"type": "DataFlowReference",
 												"datasetParameters": {
 													"source1": {
-														"FolderPath": "p_outFolder"
+														"FolderPath": "$p_inFolder",
+														"FileName": "$p_inFile"
+													},
+													"sink1": {
+														"FolderPath": "$p_outFolder"
 													}
 												}
 											},
