@@ -215,8 +215,7 @@
 												"type": "DataFlowReference",
 												"datasetParameters": {
 													"source1": {
-														"FolderPath": "p_outFolder",
-														"FileName": "$p_outFile"
+														"FolderPath": "p_outFolder"
 													}
 												}
 											},
@@ -242,6 +241,10 @@
 			"p_outRoot": {
 				"type": "string",
 				"defaultValue": "staging/final"
+			},
+			"p_overwrite": {
+				"type": "bool",
+				"defaultValue": false
 			}
 		},
 		"annotations": []
