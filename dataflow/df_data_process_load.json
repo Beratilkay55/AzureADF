@@ -10,13 +10,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "source1"
-				},
-				{
-					"dataset": {
-						"referenceName": "ref_mapping_aplaza_id",
-						"type": "DatasetReference"
-					},
-					"name": "source2"
 				}
 			],
 			"sinks": [
@@ -31,12 +24,6 @@
 			"transformations": [
 				{
 					"name": "derivedColumn1"
-				},
-				{
-					"name": "join1"
-				},
-				{
-					"name": "derivedColumn2"
 				},
 				{
 					"name": "select1"
@@ -58,34 +45,14 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1",
-				"source(output(",
-				"          role_group as string,",
-				"          role_group_aplaza_id as string,",
-				"          username as string,",
-				"          aplaza_id as string,",
-				"          id as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source2",
 				"source1 derive(gim_function_number = split(GimFunction, '.')[1],",
 				"          my_aand_user = iif(\r",
 				"    MyAand == 'N741' || MyAand == 'H742',\r",
 				"    concat(MyAand, '_', UserIdentity),\r",
 				"    ''\r",
 				"),",
-				"          functie_id = concat(\r",
-				"    split(GimFunction, '.')[ size(split(GimFunction, '.')) - 1 ],\r",
-				"    '.',\r",
-				"    split(GimFunction, '.')[ size(split(GimFunction, '.')) ]\r",
-				")) ~> derivedColumn1",
-				"derivedColumn1, source2 join(lower(trim(UserIdentity)) == lower(trim(username)),",
-				"     joinType:'cross',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1",
-				"join1 derive(aplaza_id = iif(     !isNull(aplaza_id) && aplaza_id != '',     aplaza_id,     role_group_aplaza_id )) ~> derivedColumn2",
-				"derivedColumn2 select(mapColumn(",
+				"          FunctieId = concat(split(GimFunction, '.')[3], '.', split(GimFunction, '.')[4])) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
 				"          event_id = EventId,",
 				"          message = Message,",
 				"          user_identity = UserIdentity,",
@@ -95,8 +62,7 @@
 				"          jaar = Year,",
 				"          my_aand = MyAand,",
 				"          confirmation_at = TimeStamp,",
-				"          aplaza_id,",
-				"          functie_id,",
+				"          functie_id = FunctieId,",
 				"          my_aand_user",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
@@ -105,15 +71,14 @@
 				"     validateSchema: false,",
 				"     input(",
 				"          event_id as string,",
-				"          user_identity as string,",
 				"          message as string,",
+				"          user_identity as string,",
 				"          gim_function as string,",
 				"          gim_function_number as string,",
 				"          week as string,",
 				"          jaar as string,",
 				"          my_aand as string,",
 				"          confirmation_at as string,",
-				"          aplaza_id as string,",
 				"          functie_id as string,",
 				"          my_aand_user as string",
 				"     ),",

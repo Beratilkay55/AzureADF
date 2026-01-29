@@ -28,11 +28,11 @@
 				"type": "String"
 			},
 			{
-				"name": "user_identity",
+				"name": "message",
 				"type": "String"
 			},
 			{
-				"name": "message",
+				"name": "user_identity",
 				"type": "String"
 			},
 			{
@@ -57,10 +57,6 @@
 			},
 			{
 				"name": "confirmation_at",
-				"type": "String"
-			},
-			{
-				"name": "aplaza_id",
 				"type": "String"
 			},
 			{

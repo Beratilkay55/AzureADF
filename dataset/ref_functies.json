@@ -28,7 +28,7 @@
 				"type": "String"
 			},
 			{
-				"name": "Functie Soort",
+				"name": "FunctieSoort",
 				"type": "String"
 			},
 			{

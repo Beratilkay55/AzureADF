@@ -56,10 +56,6 @@
 				"type": "INT96"
 			},
 			{
-				"name": "aplaza_id",
-				"type": "UTF8"
-			},
-			{
 				"name": "functie_id",
 				"type": "UTF8"
 			},
