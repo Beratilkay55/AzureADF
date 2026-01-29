@@ -22,7 +22,9 @@
 							"FolderPath": "@pipeline().parameters.p_inRoot"
 						}
 					},
-					"fieldList": [],
+					"fieldList": [
+						"childItems"
+					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"enablePartitionDiscovery": false
@@ -94,7 +96,9 @@
 										"FolderPath": "@concat(pipeline().parameters.p_inRoot, '/', item().name)"
 									}
 								},
-								"fieldList": [],
+								"fieldList": [
+									"childItems"
+								],
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
 									"enablePartitionDiscovery": false
@@ -169,7 +173,9 @@
 										"FileName": "@replace(item().name, '.csv', '.parquet')"
 									}
 								},
-								"fieldList": [],
+								"fieldList": [
+									"exists"
+								],
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
 									"enablePartitionDiscovery": false
