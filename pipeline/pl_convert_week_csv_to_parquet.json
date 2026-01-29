@@ -213,6 +213,24 @@
 											"dataflow": {
 												"referenceName": "df_fix_csv_to_parquet_week",
 												"type": "DataFlowReference",
+												"parameters": {
+													"p_outFolder": {
+														"value": "'@{replace(item().name, '.csv', '.parquet')}'",
+														"type": "Expression"
+													},
+													"p_outFile": {
+														"value": "'@{concat(pipeline().parameters.p_outRoot,'/', items('FE_Years').name)\n}'",
+														"type": "Expression"
+													},
+													"p_inFolder": {
+														"value": "'@{concat(pipeline().parameters.p_inRoot,'/', items('FE_Years').name)\n}'",
+														"type": "Expression"
+													},
+													"p_inFile": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													}
+												},
 												"datasetParameters": {
 													"source1": {
 														"FolderPath": "$p_inFolder",
