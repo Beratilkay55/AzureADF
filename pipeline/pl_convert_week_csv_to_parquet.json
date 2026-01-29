@@ -79,7 +79,14 @@
 						{
 							"name": "GM_ListFilesInYear",
 							"type": "GetMetadata",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "SetYearFolder",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "0.12:00:00",
 								"retry": 0,
@@ -93,7 +100,10 @@
 									"referenceName": "ds_adls_path",
 									"type": "DatasetReference",
 									"parameters": {
-										"FolderPath": "@concat(pipeline().parameters.p_inRoot, '/', item().name)"
+										"FolderPath": {
+											"value": "@concat(\n  pipeline().parameters.p_inRoot,\n  '/',\n  variables('v_yearFolder')\n)",
+											"type": "Expression"
+										}
 									}
 								},
 								"fieldList": [
@@ -129,6 +139,20 @@
 									"value": "@and(   startsWith(item().name, 'export_week_'),   endsWith(item().name, '.csv') )",
 									"type": "Expression"
 								}
+							}
+						},
+						{
+							"name": "SetYearFolder",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "v_yearFolder",
+								"value": "@item().name\n"
 							}
 						}
 					]
@@ -225,11 +249,11 @@
 														"type": "Expression"
 													},
 													"p_outFile": {
-														"value": "'@{concat(pipeline().parameters.p_outRoot,'/', items('FE_Years').name)\n}'",
+														"value": "'@{replace(item().name, '.csv', '.parquet')\n}'",
 														"type": "Expression"
 													},
 													"p_inFolder": {
-														"value": "'@{concat(pipeline().parameters.p_inRoot,'/', items('FE_Years').name)\n}'",
+														"value": "'@{concat(\n  pipeline().parameters.p_inRoot,\n  '/',\n  variables('v_yearFolder')\n)}'",
 														"type": "Expression"
 													},
 													"p_inFile": {
@@ -273,6 +297,11 @@
 			"p_overwrite": {
 				"type": "bool",
 				"defaultValue": false
+			}
+		},
+		"variables": {
+			"v_yearFolder": {
+				"type": "String"
 			}
 		},
 		"annotations": []
