@@ -1,0 +1,28 @@
+{
+	"name": "fct_export_week_parquet_sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FolderPath": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Exports"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "@dataset().FolderPath",
+				"fileSystem": "statistics"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
