@@ -13,6 +13,442 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/df_data_process_final_table_real_time')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "stg_events_current_temp_inlezen",
+								"type": "DatasetReference"
+							},
+							"name": "Hoofdtabel1"
+						},
+						{
+							"dataset": {
+								"referenceName": "ref_verzekeraar",
+								"type": "DatasetReference"
+							},
+							"name": "Verzekeraar"
+						},
+						{
+							"dataset": {
+								"referenceName": "stg_events_current_temp_inlezen",
+								"type": "DatasetReference"
+							},
+							"name": "Hoofdtabel2"
+						},
+						{
+							"dataset": {
+								"referenceName": "ref_verzekeraar_31",
+								"type": "DatasetReference"
+							},
+							"name": "Verzekeraar31"
+						},
+						{
+							"dataset": {
+								"referenceName": "ref_producten",
+								"type": "DatasetReference"
+							},
+							"name": "Producten"
+						},
+						{
+							"dataset": {
+								"referenceName": "stg_events_current_temp_inlezen",
+								"type": "DatasetReference"
+							},
+							"name": "Hoofdtabel3"
+						},
+						{
+							"dataset": {
+								"referenceName": "ref_verzekeraar_h742_n741",
+								"type": "DatasetReference"
+							},
+							"name": "VerzekeraarH742N741"
+						},
+						{
+							"dataset": {
+								"referenceName": "ref_functies",
+								"type": "DatasetReference"
+							},
+							"name": "Functies"
+						},
+						{
+							"dataset": {
+								"referenceName": "api_ref_systeemhuis",
+								"type": "DatasetReference"
+							},
+							"name": "Systeemhuis"
+						},
+						{
+							"dataset": {
+								"referenceName": "api_ref_myid",
+								"type": "DatasetReference"
+							},
+							"name": "MyIDFilter"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "fct_events_export_temp",
+								"type": "DatasetReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "dlsaplazap",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "Niet31"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "Wel31"
+						},
+						{
+							"name": "join2"
+						},
+						{
+							"name": "union1"
+						},
+						{
+							"name": "MaatschappijID"
+						},
+						{
+							"name": "H742N741"
+						},
+						{
+							"name": "join5"
+						},
+						{
+							"name": "ProductenJoin"
+						},
+						{
+							"name": "FunctiesJoin"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "derivedColumn5"
+						},
+						{
+							"name": "NieuweKolommen"
+						},
+						{
+							"name": "FilterMessage0"
+						},
+						{
+							"name": "SysteemhuizenJoin"
+						},
+						{
+							"name": "FilterMyID"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          event_id as string,",
+						"          message as string,",
+						"          user_identity as string,",
+						"          gim_function as string,",
+						"          gim_function_number as integer,",
+						"          week as integer,",
+						"          jaar as integer,",
+						"          my_aand as string,",
+						"          confirmation_at as timestamp,",
+						"          functie_id as string,",
+						"          my_aand_user as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet',",
+						"     wildcardPaths:['staging/week_*.parquet']) ~> Hoofdtabel1",
+						"source(output(",
+						"          Code as string,",
+						"          Verzekeraar as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Verzekeraar",
+						"source(output(",
+						"          event_id as string,",
+						"          message as string,",
+						"          user_identity as string,",
+						"          gim_function as string,",
+						"          gim_function_number as integer,",
+						"          week as integer,",
+						"          jaar as integer,",
+						"          my_aand as string,",
+						"          confirmation_at as timestamp,",
+						"          functie_id as string,",
+						"          my_aand_user as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet',",
+						"     wildcardPaths:['staging/week_*.parquet']) ~> Hoofdtabel2",
+						"source(output(",
+						"          Verzekeraar as string,",
+						"          Code as string,",
+						"          maatschappij_ID as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Verzekeraar31",
+						"source(output(",
+						"          {Product GIM code} as string,",
+						"          {Product omschrijving} as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Producten",
+						"source(output(",
+						"          event_id as string,",
+						"          message as string,",
+						"          user_identity as string,",
+						"          gim_function as string,",
+						"          gim_function_number as integer,",
+						"          week as integer,",
+						"          jaar as integer,",
+						"          my_aand as string,",
+						"          confirmation_at as timestamp,",
+						"          functie_id as string,",
+						"          my_aand_user as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet',",
+						"     wildcardPaths:['staging/week_*.parquet']) ~> Hoofdtabel3",
+						"source(output(",
+						"          Code as string,",
+						"          maatschappij_ID as string,",
+						"          Verzekeraar as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> VerzekeraarH742N741",
+						"source(output(",
+						"          Code as string,",
+						"          FunctieSoort as string,",
+						"          FunctieType as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Functies",
+						"source(output(",
+						"          Naam as string,",
+						"          {Systeemhuis Prefix} as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Systeemhuis",
+						"source(output(",
+						"          filter as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> MyIDFilter",
+						"Hoofdtabel1 filter(gim_function_number != 31,",
+						"     partitionBy('hash', 1)) ~> Niet31",
+						"MaatschappijID, Verzekeraar join(maatschappij_ID == Code,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"Hoofdtabel2 filter(gim_function_number == 31 && my_aand != 'H742' && my_aand != 'N741') ~> Wel31",
+						"Wel31, Verzekeraar31 join(my_aand == Code,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join2",
+						"join1, join2, join5 union(byName: true)~> union1",
+						"Niet31 derive(maatschappij_ID = toString(gim_function_number)) ~> MaatschappijID",
+						"Hoofdtabel3 filter(gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741')) ~> H742N741",
+						"H742N741, VerzekeraarH742N741 join(startsWith(my_aand_user, Code),",
+						"     joinType:'cross',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> join5",
+						"NieuweKolommen, Producten join(middenstuk == {Product GIM code},",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> ProductenJoin",
+						"SysteemhuizenJoin, Functies join(functie_id == Functies@Code,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> FunctiesJoin",
+						"derivedColumn5 select(mapColumn(",
+						"          Systeemhuis = Naam,",
+						"          EventNaam,",
+						"          KantoorId,",
+						"          MaatschappijId = maatschappij_ID,",
+						"          Verzekeraar,",
+						"          Jaar = jaar,",
+						"          Week = week,",
+						"          Message = message,",
+						"          TimeStamp = confirmation_at,",
+						"          GebruikerId,",
+						"          FunctieId = functie_id,",
+						"          Productomschrijving = {Product omschrijving},",
+						"          FunctieSoort,",
+						"          FunctieType,",
+						"          KantoorGebruikerId = {KantoorId+GebruikId},",
+						"          User_identity = user_identity,",
+						"          role_group,",
+						"          my_aand,",
+						"          gim_function",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"FilterMessage0 derive({KantoorId+GebruikId} = replace(concat(KantoorId, '_', GebruikerId), '-', '_'),",
+						"          role_group = concat( toString({Systeemhuis Prefix}),     '_',     toString(KantoorId) )) ~> derivedColumn5",
+						"union1 derive(middenstuk = split(gim_function, \".\")[2],",
+						"          KantoorId = split(user_identity, '_')[2],",
+						"          GebruikerId = substring(    user_identity,    locate('_', user_identity, locate('_', user_identity) + 1) + 1),",
+						"          Systeemhuis = split(user_identity, '_')[1],",
+						"          EventNaam = case(    event_id == '43', 'Transacties',    event_id == '45', 'Transacties',    event_id == '49', 'Transacties',    event_id == '73', 'Berichten',    event_id == '74', 'Documenten',    'Onbekend')) ~> NieuweKolommen",
+						"FilterMyID filter(!(",
+						"  (event_id == '73' || event_id == '74')",
+						"  && message == '0'",
+						") && event_id != '43') ~> FilterMessage0",
+						"ProductenJoin, Systeemhuis join(Systeemhuis == {Systeemhuis Prefix},",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> SysteemhuizenJoin",
+						"FunctiesJoin, MyIDFilter exists(maatschappij_ID == filter,",
+						"     negate:true,",
+						"     broadcast: 'auto')~> FilterMyID",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     partitionFileNames:[(concat('export_tijdelijk', '.parquet'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_data_process_load')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "raw_statistiek_ingest",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "stg_events_current",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "select1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          EventId as string,",
+						"          MachineName as string,",
+						"          Title as string,",
+						"          TimeStamp as string,",
+						"          Message as string,",
+						"          UserIdentity as string,",
+						"          GimFunction as string,",
+						"          Week as string,",
+						"          Year as string,",
+						"          MyAand as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 derive(gim_function_number = split(GimFunction, '.')[1],",
+						"          my_aand_user = iif(\r",
+						"    MyAand == 'N741' || MyAand == 'H742',\r",
+						"    concat(MyAand, '_', UserIdentity),\r",
+						"    ''\r",
+						"),",
+						"          FunctieId = concat(split(GimFunction, '.')[3], '.', split(GimFunction, '.')[4])) ~> derivedColumn1",
+						"derivedColumn1 select(mapColumn(",
+						"          event_id = EventId,",
+						"          message = Message,",
+						"          user_identity = UserIdentity,",
+						"          gim_function = GimFunction,",
+						"          gim_function_number,",
+						"          week = Week,",
+						"          jaar = Year,",
+						"          my_aand = MyAand,",
+						"          confirmation_at = TimeStamp,",
+						"          functie_id = FunctieId,",
+						"          my_aand_user",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          event_id as string,",
+						"          message as string,",
+						"          user_identity as string,",
+						"          gim_function as string,",
+						"          gim_function_number as string,",
+						"          week as string,",
+						"          jaar as string,",
+						"          my_aand as string,",
+						"          confirmation_at as string,",
+						"          functie_id as string,",
+						"          my_aand_user as string",
+						"     ),",
+						"     partitionFileNames:['tijdelijk-ingest.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_errors_load')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -225,13 +661,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "source1"
-						},
-						{
-							"dataset": {
-								"referenceName": "ref_mapping_aplaza_id",
-								"type": "DatasetReference"
-							},
-							"name": "source2"
 						}
 					],
 					"sinks": [
@@ -246,12 +675,6 @@
 					"transformations": [
 						{
 							"name": "derivedColumn1"
-						},
-						{
-							"name": "join1"
-						},
-						{
-							"name": "derivedColumn2"
 						},
 						{
 							"name": "select1"
@@ -273,16 +696,6 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> source1",
-						"source(output(",
-						"          role_group as string,",
-						"          role_group_aplaza_id as string,",
-						"          username as string,",
-						"          aplaza_id as string,",
-						"          id as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> source2",
 						"source1 derive(gim_function_number = split(GimFunction, '.')[1],",
 						"          my_aand_user = iif(\r",
 						"    MyAand == 'N741' || MyAand == 'H742',\r",
@@ -294,13 +707,7 @@
 						"    '.',\r",
 						"    split(GimFunction, '.')[ size(split(GimFunction, '.')) ]\r",
 						")) ~> derivedColumn1",
-						"derivedColumn1, source2 join(lower(trim(UserIdentity)) == lower(trim(username)),",
-						"     joinType:'cross',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> join1",
-						"join1 derive(aplaza_id = iif(     !isNull(aplaza_id) && aplaza_id != '',     aplaza_id,     role_group_aplaza_id )) ~> derivedColumn2",
-						"derivedColumn2 select(mapColumn(",
+						"derivedColumn1 select(mapColumn(",
 						"          event_id = EventId,",
 						"          message = Message,",
 						"          user_identity = UserIdentity,",
@@ -310,7 +717,6 @@
 						"          jaar = Year,",
 						"          my_aand = MyAand,",
 						"          confirmation_at = TimeStamp,",
-						"          aplaza_id,",
 						"          functie_id,",
 						"          my_aand_user",
 						"     ),",
@@ -320,15 +726,14 @@
 						"     validateSchema: false,",
 						"     input(",
 						"          event_id as string,",
-						"          user_identity as string,",
 						"          message as string,",
+						"          user_identity as string,",
 						"          gim_function as string,",
 						"          gim_function_number as string,",
 						"          week as string,",
 						"          jaar as string,",
 						"          my_aand as string,",
 						"          confirmation_at as string,",
-						"          aplaza_id as string,",
 						"          functie_id as string,",
 						"          my_aand_user as string",
 						"     ),",
@@ -488,7 +893,9 @@
 						"          Reden_status_Vertrokken,",
 						"          Datum_status,",
 						"          Systeemhuis,",
-						"          Reden_status_Niet_Afgerond",
+						"          Reden_status_Niet_Afgerond,",
+						"          KantoorId,",
+						"          GebruikerID",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select1",
@@ -1167,7 +1574,7 @@
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "CREATE OR REPLACE VIEW public.vw_aplaza_all AS\nWITH base AS (\n  SELECT\n    v.event_id,\n    CASE\n      WHEN v.Message_txt IS NOT NULL\n       AND NULLIF(btrim(v.Message_txt), '') ~ '^[+-]?[0-9]+$'\n        THEN (NULLIF(btrim(v.Message_txt), ''))::bigint\n      ELSE NULL\n    END AS Message,\n    v.user_identity,\n    v.gim_function,\n    COALESCE(\n      v.gim_function_number, \n      CASE\n        WHEN split_part(v.gim_function, '.', 1) ~ '^[0-9]+$'\n          THEN split_part(v.gim_function, '.', 1)::int\n        ELSE NULL\n      END\n    ) AS gim_function_number,\n    v.week,\n    v.jaar,\n    v.my_aand,\n    v.confirmation_at,\n    COALESCE(NULLIF(r.aplaza_id, ''), r.role_group_aplaza_id) AS aplaza_id\n  FROM (\n    -- file_results: confirmation_at + 1 hours\n    SELECT\n      event_id::text                AS event_id,\n      Message::text                 AS Message_txt,\n      user_identity::text           AS user_identity,\n      gim_function::text            AS gim_function,\n      NULL::int                     AS gim_function_number, \n      week::int                     AS week,\n      year::int                     AS jaar,\n      my_aand::text                 AS my_aand,\n      (confirmation_at + interval '1 hours')::timestamptz AS confirmation_at\n    FROM statistics.file_results\n    WHERE confirmation_at IS NOT NULL\n\n    UNION ALL\n\n    -- transactions: event_at -> confirmation_at + 1 hours\n    SELECT\n      event_id::text                AS event_id,\n      NULL::text                    AS Message_txt,\n      user_identity::text           AS user_identity,\n      gim_function::text            AS gim_function,\n      CASE\n        WHEN split_part(gim_function, '.', 1) ~ '^[0-9]+$'\n          THEN split_part(gim_function, '.', 1)::int\n        ELSE NULL\n      END                           AS gim_function_number,\n      week::int                     AS week,\n      year::int                     AS jaar,\n      NULL::text                    AS my_aand,\n      (event_at + interval '1 hours')::timestamptz AS confirmation_at\n    FROM statistics.transactions\n    WHERE event_at IS NOT NULL\n  ) v\n  LEFT JOIN usermgmt.v_get_aplaza_ids r\n    ON lower(trim(v.user_identity)) = lower(trim(r.username))\n)\nSELECT\n  b.*,\n  (\n    (regexp_split_to_array(b.gim_function, '\\.'))[\n      array_length(regexp_split_to_array(b.gim_function, '\\.'), 1) - 1\n    ]\n    || '.' ||\n    (regexp_split_to_array(b.gim_function, '\\.'))[\n      array_length(regexp_split_to_array(b.gim_function, '\\.'), 1)\n    ]\n  ) AS functie_id,\n  CASE \n    WHEN b.my_aand IN ('N741','H742') \n      THEN b.my_aand || '_' || b.user_identity\n    ELSE NULL\n  END AS my_aand_user\nFROM base AS b\nWHERE b.event_id IS NOT NULL\n  AND (b.user_identity IS NULL OR b.user_identity NOT LIKE 'EZAPP%')\n  AND NOT (b.event_id IN ('73','74') AND b.Message = 0)\n  AND (\n    b.event_id <> '45'\n    OR (regexp_split_to_array(b.gim_function, '\\.'))[3] = '300'\n  );\n"
+									"text": "DROP VIEW public.vw_aplaza_all;\n\nCREATE OR REPLACE VIEW public.vw_aplaza_all AS\nWITH base AS (\n  SELECT\n    v.event_id,\n    CASE\n      WHEN v.Message_txt IS NOT NULL\n       AND NULLIF(btrim(v.Message_txt), '') ~ '^[+-]?[0-9]+$'\n        THEN (NULLIF(btrim(v.Message_txt), ''))::bigint\n      ELSE NULL\n    END AS Message,\n    v.user_identity,\n    v.gim_function,\n    COALESCE(\n      v.gim_function_number, \n      CASE\n        WHEN split_part(v.gim_function, '.', 1) ~ '^[0-9]+$'\n          THEN split_part(v.gim_function, '.', 1)::int\n        ELSE NULL\n      END\n    ) AS gim_function_number,\n    v.week,\n    v.jaar,\n    v.my_aand,\n    v.confirmation_at\n  FROM (\n    -- file_results: confirmation_at + 1 hours\n    SELECT\n      event_id::text                AS event_id,\n      Message::text                 AS Message_txt,\n      user_identity::text           AS user_identity,\n      gim_function::text            AS gim_function,\n      NULL::int                     AS gim_function_number, \n      week::int                     AS week,\n      year::int                     AS jaar,\n      my_aand::text                 AS my_aand,\n      (confirmation_at + interval '1 hours')::timestamptz AS confirmation_at\n    FROM statistics.file_results\n    WHERE confirmation_at IS NOT NULL\n\n    UNION ALL\n\n    -- transactions: event_at -> confirmation_at + 1 hours\n    SELECT\n      event_id::text                AS event_id,\n      NULL::text                    AS Message_txt,\n      user_identity::text           AS user_identity,\n      gim_function::text            AS gim_function,\n      CASE\n        WHEN split_part(gim_function, '.', 1) ~ '^[0-9]+$'\n          THEN split_part(gim_function, '.', 1)::int\n        ELSE NULL\n      END                           AS gim_function_number,\n      week::int                     AS week,\n      year::int                     AS jaar,\n      NULL::text                    AS my_aand,\n      (event_at + interval '1 hours')::timestamptz AS confirmation_at\n    FROM statistics.transactions\n    WHERE event_at IS NOT NULL\n  ) v\n)\nSELECT\n  b.*,\n  (\n    (regexp_split_to_array(b.gim_function, '\\.'))[\n      array_length(regexp_split_to_array(b.gim_function, '\\.'), 1) - 1\n    ]\n    || '.' ||\n    (regexp_split_to_array(b.gim_function, '\\.'))[\n      array_length(regexp_split_to_array(b.gim_function, '\\.'), 1)\n    ]\n  ) AS functie_id,\n  CASE \n    WHEN b.my_aand IN ('N741','H742') \n      THEN b.my_aand || '_' || b.user_identity\n    ELSE NULL\n  END AS my_aand_user\nFROM base AS b\nWHERE b.event_id IS NOT NULL\n  AND (b.user_identity IS NULL OR b.user_identity NOT LIKE 'EZAPP%')\n  AND NOT (b.event_id IN ('73','74') AND b.Message = 0)\n  AND (\n    b.event_id <> '45'\n    OR (regexp_split_to_array(b.gim_function, '\\.'))[3] = '300'\n  );\n"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
@@ -1206,7 +1613,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"dataset": {
-											"referenceName": "fct_events_export_check",
+											"referenceName": "ref_csv_events_export_check",
 											"type": "DatasetReference",
 											"parameters": {
 												"Folder": "final/Statistieken/year=2026",
@@ -1627,7 +2034,7 @@
 							},
 							"enableLogging": false,
 							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
+								"type": "AzureBlobStorageReadSettings",
 								"recursive": true,
 								"enablePartitionDiscovery": false
 							}
@@ -1653,7 +2060,7 @@
 							},
 							"enableLogging": false,
 							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
+								"type": "AzureBlobStorageReadSettings",
 								"recursive": true,
 								"enablePartitionDiscovery": false
 							}
@@ -1681,9 +2088,11 @@
 					}
 				},
 				"annotations": [],
-				"lastPublishTime": "2026-01-15T14:00:08Z"
+				"lastPublishTime": "2026-01-29T11:28:06Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_data_process_final_table_real_time')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_main_table_weekly')]",
@@ -1752,7 +2161,7 @@
 						"type": "ExecuteDataFlow",
 						"dependsOn": [
 							{
-								"activity": "Copy data1",
+								"activity": "Subkantoren",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1773,7 +2182,6 @@
 								"parameters": {},
 								"datasetParameters": {
 									"source1": {},
-									"source2": {},
 									"sink1": {}
 								}
 							},
@@ -1784,67 +2192,6 @@
 							},
 							"traceLevel": "Fine"
 						}
-					},
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Subkantoren",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzurePostgreSqlSource",
-								"partitionOption": "None",
-								"queryTimeout": "02:00:00"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "fct_aplaza_id",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ref_mapping_aplaza_id",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
 					},
 					{
 						"name": "LookupWeekExcel",
@@ -1965,7 +2312,7 @@
 							},
 							"enableLogging": false,
 							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
+								"type": "AzureBlobStorageReadSettings",
 								"recursive": true,
 								"enablePartitionDiscovery": false
 							}
@@ -2005,9 +2352,10 @@
 					}
 				},
 				"annotations": [],
-				"lastPublishTime": "2026-01-15T14:00:08Z"
+				"lastPublishTime": "2026-01-21T15:52:52Z"
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_data_process_load')]",
 				"[concat(variables('factoryId'), '/dataflows/df_subkantoren_ingest')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_table_realtime')]"
 			]
