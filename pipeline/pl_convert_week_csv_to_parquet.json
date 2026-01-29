@@ -212,7 +212,13 @@
 										"typeProperties": {
 											"dataflow": {
 												"referenceName": "df_fix_csv_to_parquet_week",
-												"type": "DataFlowReference"
+												"type": "DataFlowReference",
+												"datasetParameters": {
+													"source1": {
+														"FolderPath": "p_outFolder",
+														"FileName": "$p_outFile"
+													}
+												}
 											},
 											"compute": {
 												"coreCount": 8,

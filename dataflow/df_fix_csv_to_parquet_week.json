@@ -14,6 +14,10 @@
 			],
 			"sinks": [
 				{
+					"dataset": {
+						"referenceName": "fct_export_week_parquet_sink",
+						"type": "DatasetReference"
+					},
 					"name": "sink1"
 				}
 			],
@@ -54,8 +58,14 @@
 				"source1 derive(FunctieId = iif( isNull(FunctieId), null(),replace(trim(toString(FunctieId)), ',', '.') )) ~> derivedColumn1",
 				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     partitionFileNames:['$p_outFile'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
