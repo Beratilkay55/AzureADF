@@ -245,7 +245,7 @@
 															"type": "DataFlowReference",
 															"parameters": {
 																"p_outFolder": {
-																	"value": "'@{concat(pipeline().parameters.p_outRoot,'/', variables('v_yearFolder'))\n}'",
+																	"value": "'@{concat(pipeline().parameters.p_outRoot,'/', variables('v_yearFolder'))}'",
 																	"type": "Expression"
 																},
 																"p_outFile": {
