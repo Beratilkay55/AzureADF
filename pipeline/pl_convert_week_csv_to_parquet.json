@@ -260,15 +260,6 @@
 																	"value": "'@{item().name}'",
 																	"type": "Expression"
 																}
-															},
-															"datasetParameters": {
-																"source1": {
-																	"FolderPath": "$p_inFolder",
-																	"FileName": "$p_inFile"
-																},
-																"sink1": {
-																	"FolderPath": "$p_outFolder"
-																}
 															}
 														},
 														"compute": {
