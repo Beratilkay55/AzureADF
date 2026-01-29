@@ -245,7 +245,7 @@
 															"type": "DataFlowReference",
 															"parameters": {
 																"p_outFolder": {
-																	"value": "'@{replace(item().name, '.csv', '.parquet')}'",
+																	"value": "'@{concat(pipeline().parameters.p_outRoot,'/', variables('v_yearFolder'))\n}'",
 																	"type": "Expression"
 																},
 																"p_outFile": {
@@ -253,7 +253,7 @@
 																	"type": "Expression"
 																},
 																"p_inFolder": {
-																	"value": "'@{concat(\n  pipeline().parameters.p_inRoot,\n  '/',\n  variables('v_yearFolder')\n)}'",
+																	"value": "'@{concat(pipeline().parameters.p_inRoot,'/', variables('v_yearFolder'))\n}'",
 																	"type": "Expression"
 																},
 																"p_inFile": {
