@@ -13,7 +13,11 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
 			"scriptLines": [
 				"parameters{",
 				"     p_inFolder as string,",
@@ -21,9 +25,29 @@
 				"     p_outFolder as string,",
 				"     p_outFile as string",
 				"}",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          Systeemhuis as string,",
+				"          EventNaam as string,",
+				"          KantoorId as string,",
+				"          MaatschappijId as string,",
+				"          Verzekeraar as string,",
+				"          Jaar as string,",
+				"          Week as string,",
+				"          Message as string,",
+				"          TimeStamp as string,",
+				"          GebruikerId as string,",
+				"          FunctieId as string,",
+				"          Productomschrijving as string,",
+				"          FunctieSoort as string,",
+				"          FunctieType as string,",
+				"          KantoorGebruikerId as string,",
+				"          User_identity as string,",
+				"          role_group as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1"
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive(FunctieId = iif(   isNull(FunctieId),   null(),   replace(trim(toString(FunctieId)), ',', '.') )) ~> derivedColumn1"
 			]
 		}
 	}

@@ -25,11 +25,80 @@
 				"folderPath": "@dataset().FolderPath",
 				"fileSystem": "statistics"
 			},
-			"columnDelimiter": ",",
+			"columnDelimiter": ";",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "Systeemhuis",
+				"type": "String"
+			},
+			{
+				"name": "EventNaam",
+				"type": "String"
+			},
+			{
+				"name": "KantoorId",
+				"type": "String"
+			},
+			{
+				"name": "MaatschappijId",
+				"type": "String"
+			},
+			{
+				"name": "Verzekeraar",
+				"type": "String"
+			},
+			{
+				"name": "Jaar",
+				"type": "String"
+			},
+			{
+				"name": "Week",
+				"type": "String"
+			},
+			{
+				"name": "Message",
+				"type": "String"
+			},
+			{
+				"name": "TimeStamp",
+				"type": "String"
+			},
+			{
+				"name": "GebruikerId",
+				"type": "String"
+			},
+			{
+				"name": "FunctieId",
+				"type": "String"
+			},
+			{
+				"name": "Productomschrijving",
+				"type": "String"
+			},
+			{
+				"name": "FunctieSoort",
+				"type": "String"
+			},
+			{
+				"name": "FunctieType",
+				"type": "String"
+			},
+			{
+				"name": "KantoorGebruikerId",
+				"type": "String"
+			},
+			{
+				"name": "User_identity",
+				"type": "String"
+			},
+			{
+				"name": "role_group",
+				"type": "String"
+			}
+		]
 	}
 }
