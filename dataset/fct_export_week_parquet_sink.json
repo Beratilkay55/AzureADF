@@ -7,8 +7,7 @@
 		},
 		"parameters": {
 			"FolderPath": {
-				"type": "string",
-				"defaultValue": "p_outFolder"
+				"type": "string"
 			}
 		},
 		"folder": {
