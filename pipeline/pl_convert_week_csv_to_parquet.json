@@ -251,29 +251,26 @@
 															"type": "DataFlowReference",
 															"parameters": {
 																"p_outFolder": {
-																	"value": "'@{concat(pipeline().parameters.p_outRoot,'/',variables('v_yearFolder'))\n}'",
+																	"value": "@concat(pipeline().parameters.p_outRoot,'/',variables('v_yearFolder'))",
 																	"type": "Expression"
 																},
 																"p_outFile": {
-																	"value": "'@{replace(item().name, '.csv', '.parquet')\n}'",
+																	"value": "@replace(item().name, '.csv', '.parquet')",
 																	"type": "Expression"
 																},
 																"p_inFolder": {
-																	"value": "'@{concat(pipeline().parameters.p_inRoot,'/', variables('v_yearFolder'))\n}'",
+																	"value": "@concat(pipeline().parameters.p_inRoot,'/',variables('v_yearFolder'))",
 																	"type": "Expression"
 																},
 																"p_inFile": {
-																	"value": "'@{item().name}'",
+																	"value": "@item().name",
 																	"type": "Expression"
 																}
 															},
 															"datasetParameters": {
 																"source1": {
 																	"FolderPath": "$p_inFolder",
-																	"FileName": {
-																		"value": "$p_inFile",
-																		"type": "Expression"
-																	}
+																	"FileName": "$p_inFile"
 																},
 																"sink1": {
 																	"FolderPath": "$p_outFolder"
