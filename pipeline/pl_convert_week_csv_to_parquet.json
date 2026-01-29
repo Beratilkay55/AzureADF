@@ -190,7 +190,10 @@
 												"referenceName": "ds_adls_file",
 												"type": "DatasetReference",
 												"parameters": {
-													"FolderPath": "@concat(pipeline().parameters.p_outRoot, '/', items('FE_Years').name)",
+													"FolderPath": {
+														"value": "@concat(pipeline().parameters.p_outRoot, '/', variables('v_yearFolder'))\n",
+														"type": "Expression"
+													},
 													"FileName": "@replace(item().name, '.csv', '.parquet')"
 												}
 											},
