@@ -19,7 +19,10 @@
 						"referenceName": "ds_adls_path",
 						"type": "DatasetReference",
 						"parameters": {
-							"FolderPath": "@pipeline().parameters.p_inRoot"
+							"FolderPath": {
+								"value": "@pipeline().parameters.p_inRoot",
+								"type": "Expression"
+							}
 						}
 					},
 					"fieldList": [
@@ -72,11 +75,28 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Filter_Years').output.value\n",
+						"value": "@activity('Filter_Years').output.value",
 						"type": "Expression"
 					},
 					"isSequential": true,
 					"activities": [
+						{
+							"name": "SetYearFolder",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "v_yearFolder",
+								"value": {
+									"value": "@item().name",
+									"type": "Expression"
+								}
+							}
+						},
 						{
 							"name": "GM_ListFilesInYear",
 							"type": "GetMetadata",
@@ -102,7 +122,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"FolderPath": {
-											"value": "@concat(\n  pipeline().parameters.p_inRoot,\n  '/',\n  variables('v_yearFolder')\n)",
+											"value": "@concat(pipeline().parameters.p_inRoot, '/', variables('v_yearFolder'))",
 											"type": "Expression"
 										}
 									}
@@ -138,24 +158,7 @@
 									"type": "Expression"
 								},
 								"condition": {
-									"value": "@and(\n  startswith(item().name, 'export_week_'),\n  endswith(item().name, '.csv')\n)",
-									"type": "Expression"
-								}
-							}
-						},
-						{
-							"name": "SetYearFolder",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"policy": {
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "v_yearFolder",
-								"value": {
-									"value": "@item().name",
+									"value": "@and(startswith(item().name, 'export_week_'), endswith(item().name, '.csv'))",
 									"type": "Expression"
 								}
 							}
@@ -174,9 +177,10 @@
 							"userProperties": [],
 							"typeProperties": {
 								"items": {
-									"value": "@activity('Filter_WeekCsv').output.value\n",
+									"value": "@activity('Filter_WeekCsv').output.value",
 									"type": "Expression"
 								},
+								"isSequential": true,
 								"activities": [
 									{
 										"name": "GM_TargetExists",
@@ -196,10 +200,13 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"FolderPath": {
-														"value": "@concat(pipeline().parameters.p_outRoot, '/', variables('v_yearFolder'))\n",
+														"value": "@concat(pipeline().parameters.p_outRoot, '/', variables('v_yearFolder'))",
 														"type": "Expression"
 													},
-													"FileName": "@replace(item().name, '.csv', '.parquet')"
+													"FileName": {
+														"value": "@replace(item().name, '.csv', '.parquet')",
+														"type": "Expression"
+													}
 												}
 											},
 											"fieldList": [
@@ -229,7 +236,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"expression": {
-												"value": "@or(\n  pipeline().parameters.p_overwrite,\n  not(activity('GM_TargetExists').output.exists)\n)\n",
+												"value": "@or(pipeline().parameters.p_overwrite, not(activity('GM_TargetExists').output.exists))",
 												"type": "Expression"
 											},
 											"ifTrueActivities": [
@@ -251,7 +258,7 @@
 															"type": "DataFlowReference",
 															"parameters": {
 																"p_outFolder": {
-																	"value": "@concat(pipeline().parameters.p_outRoot,'/',variables('v_yearFolder'))",
+																	"value": "@concat(pipeline().parameters.p_outRoot, '/', variables('v_yearFolder'))",
 																	"type": "Expression"
 																},
 																"p_outFile": {
@@ -259,7 +266,7 @@
 																	"type": "Expression"
 																},
 																"p_inFolder": {
-																	"value": "@concat(pipeline().parameters.p_inRoot,'/',variables('v_yearFolder'))",
+																	"value": "@concat(pipeline().parameters.p_inRoot, '/', variables('v_yearFolder'))",
 																	"type": "Expression"
 																},
 																"p_inFile": {
