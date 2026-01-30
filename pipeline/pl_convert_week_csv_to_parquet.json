@@ -81,130 +81,8 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "SetYearFolder",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"policy": {
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "v_yearFolder",
-								"value": {
-									"value": "@item().name",
-									"type": "Expression"
-								}
-							}
-						},
-						{
-							"name": "GM_ListFilesInYear",
-							"type": "GetMetadata",
-							"dependsOn": [
-								{
-									"activity": "SetYearFolder",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"dataset": {
-									"referenceName": "ds_adls_path",
-									"type": "DatasetReference",
-									"parameters": {
-										"FolderPath": {
-											"value": "@concat(pipeline().parameters.p_inRoot, '/', variables('v_yearFolder'))",
-											"type": "Expression"
-										}
-									}
-								},
-								"fieldList": [
-									"childItems"
-								],
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "BinaryReadSettings"
-								}
-							}
-						},
-						{
-							"name": "Filter_WeekCsv",
-							"type": "Filter",
-							"dependsOn": [
-								{
-									"activity": "GM_ListFilesInYear",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"items": {
-									"value": "@activity('GM_ListFilesInYear').output.childItems",
-									"type": "Expression"
-								},
-								"condition": {
-									"value": "@and(startswith(item().name, 'export_week_'), endswith(item().name, '.csv'))",
-									"type": "Expression"
-								}
-							}
-						},
-						{
-							"name": "Append variable1",
-							"type": "AppendVariable",
-							"dependsOn": [
-								{
-									"activity": "Filter_WeekCsv",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "v_weekFiles",
-								"value": "@json(concat(\n  '{',\n    '\"yearFolder\":\"', item().name, '\",',\n    '\"inFolder\":\"', pipeline().parameters.p_inRoot, '/', item().name, '\",',\n    '\"inFile\":\"', first(activity('Filter_WeekCsvInYear').output.value).name, '\",',\n    '\"outFolder\":\"', pipeline().parameters.p_outRoot, '/', item().name, '\",',\n    '\"outFile\":\"', replace(first(activity('Filter_WeekCsvInYear').output.value).name, '.csv', '.parquet'), '\"',\n  '}'\n))\n"
-							}
-						}
-					]
-				}
-			},
-			{
-				"name": "FE_Files",
-				"type": "ForEach",
-				"dependsOn": [
-					{
-						"activity": "FE_Years",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"items": {
-						"value": "@variables('v_weekFiles')",
-						"type": "Expression"
-					},
-					"isSequential": true,
-					"activities": [
-						{
-							"name": "GM_TargetExists",
-							"type": "GetMetadata",
+							"name": "Data flow1",
+							"type": "ExecuteDataFlow",
 							"dependsOn": [],
 							"policy": {
 								"timeout": "0.12:00:00",
@@ -215,103 +93,15 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"dataset": {
-									"referenceName": "ds_adls_file",
-									"type": "DatasetReference",
-									"parameters": {
-										"FolderPath": {
-											"value": "@item().outFolder",
-											"type": "Expression"
-										},
-										"FileName": {
-											"value": "@item().outFile",
-											"type": "Expression"
-										}
-									}
+								"dataflow": {
+									"referenceName": "df_fix_csv_to_parquet_week",
+									"type": "DataFlowReference"
 								},
-								"fieldList": [
-									"exists"
-								],
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
 								},
-								"formatSettings": {
-									"type": "BinaryReadSettings"
-								}
-							}
-						},
-						{
-							"name": "IF_ConvertNeeded",
-							"type": "IfCondition",
-							"dependsOn": [
-								{
-									"activity": "GM_TargetExists",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"expression": {
-									"value": "@or(pipeline().parameters.p_overwrite, not(activity('GM_TargetExists').output.exists))",
-									"type": "Expression"
-								},
-								"ifTrueActivities": [
-									{
-										"name": "DF_ConvertOne",
-										"type": "ExecuteDataFlow",
-										"dependsOn": [],
-										"policy": {
-											"timeout": "0.12:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"dataflow": {
-												"referenceName": "df_fix_csv_to_parquet_week",
-												"type": "DataFlowReference",
-												"parameters": {
-													"p_outFolder": {
-														"value": "@item().outFile",
-														"type": "Expression"
-													},
-													"p_outFile": {
-														"value": "@item().outFolder",
-														"type": "Expression"
-													},
-													"p_inFolder": {
-														"value": "@item().inFolder",
-														"type": "Expression"
-													},
-													"p_inFile": {
-														"value": "'@{item().inFile}'",
-														"type": "Expression"
-													}
-												},
-												"datasetParameters": {
-													"source1": {
-														"FolderPath": "@concat(pipeline().parameters.p_inRoot,'/',variables('v_yearFolder'))",
-														"FileName": "@item().name"
-													},
-													"sink1": {
-														"FolderPath": "@concat(pipeline().parameters.p_outRoot,'/',variables('v_yearFolder'))"
-													}
-												}
-											},
-											"compute": {
-												"coreCount": 8,
-												"computeType": "General"
-											},
-											"traceLevel": "Fine"
-										}
-									}
-								]
+								"traceLevel": "Fine"
 							}
 						}
 					]
