@@ -278,7 +278,7 @@
 			},
 			"p_outRoot": {
 				"type": "string",
-				"defaultValue": "final/Statistieken"
+				"defaultValue": "final/statistieken"
 			},
 			"p_overwrite": {
 				"type": "bool",

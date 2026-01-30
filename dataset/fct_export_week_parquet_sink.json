@@ -14,7 +14,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"folderPath": {
-					"value": "final/Statistieken",
+					"value": "final/statistieken",
 					"type": "Expression"
 				},
 				"fileSystem": "statistics"

@@ -434,7 +434,7 @@
 						"datasetParameters": {
 							"sink1": {
 								"Folder": {
-									"value": "@concat( 'final/Statistieken/Temp')",
+									"value": "@concat( 'final/statistieken/Temp')",
 									"type": "Expression"
 								}
 							}
