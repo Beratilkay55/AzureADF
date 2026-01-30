@@ -503,6 +503,7 @@
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
+						"wildcardFileName": "week_*.parquet",
 						"enablePartitionDiscovery": false
 					}
 				}

@@ -166,6 +166,8 @@
 			{
 				"name": "Verwijder Tijdelijk Bestand",
 				"type": "Delete",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Execute Pipeline2",
