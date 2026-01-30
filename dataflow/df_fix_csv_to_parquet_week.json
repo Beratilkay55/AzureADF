@@ -53,7 +53,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     rowUrlColumn: 'OrigFileName',",
-				"     wildcardPaths:[(concat($p_year_folder, '/*.csv'))]) ~> source1",
+				"     wildcardPaths:[(@concat($p_year_folder, '/*.csv'))]) ~> source1",
 				"source1 derive(FunctieId = replace(trim(toString(FunctieId)), ',', '.'),",
 				"          ParquetFileName = replace(OrigFileName, '.csv', '.parquet')) ~> derivedColumn1",
 				"derivedColumn1 sink(allowSchemaDrift: true,",
