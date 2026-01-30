@@ -14,7 +14,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"folderPath": {
-					"value": "@dataset().FolderPath",
+					"value": "final/Statistieken",
 					"type": "Expression"
 				},
 				"fileSystem": "statistics"

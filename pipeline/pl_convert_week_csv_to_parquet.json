@@ -95,7 +95,13 @@
 							"typeProperties": {
 								"dataflow": {
 									"referenceName": "df_fix_csv_to_parquet_week",
-									"type": "DataFlowReference"
+									"type": "DataFlowReference",
+									"parameters": {
+										"p_year_folder": {
+											"value": "'@{item().name}'",
+											"type": "Expression"
+										}
+									}
 								},
 								"compute": {
 									"coreCount": 8,
