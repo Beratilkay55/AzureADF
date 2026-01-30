@@ -259,7 +259,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "Ophalen",
+						"referenceName": "stg_get_csv",
 						"type": "DatasetReference"
 					}
 				],
