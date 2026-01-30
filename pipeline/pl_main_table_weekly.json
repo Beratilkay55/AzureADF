@@ -168,7 +168,7 @@
 				"type": "Delete",
 				"dependsOn": [
 					{
-						"activity": "Data Process",
+						"activity": "Execute Pipeline2",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -216,6 +216,34 @@
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Execute Pipeline2",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Data Process",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_convert_week_csv_to_parquet",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"p_inRoot": "staging/StatistiekenCSV",
+						"p_outRoot": "final/Statistieken",
+						"p_overwrite": false
+					}
 				}
 			}
 		],
