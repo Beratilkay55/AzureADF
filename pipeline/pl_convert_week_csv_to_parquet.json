@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "CSV_TO_Parquet",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -15,10 +15,276 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"enableStaging": false
-				}
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@concat(pipeline().parameters.p_inRoot, '/year=*')\n",
+								"type": "Expression"
+							},
+							"wildcardFileName": "export_week_*.csv",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Systeemhuis",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Systeemhuis",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "EventNaam",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EventNaam",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "KantoorId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "KantoorId",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "MaatschappijId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "MaatschappijId",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Verzekeraar",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Verzekeraar",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Jaar",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Jaar",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Week",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Week",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Message",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Message",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "TimeStamp",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TimeStamp",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "GebruikerId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "GebruikerId",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "FunctieId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FunctieId",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Productomschrijving",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Productomschrijving",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "FunctieSoort",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FunctieSoort",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "FunctieType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FunctieType",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "KantoorGebruikerId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "KantoorGebruikerId",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "User_identity",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "User_identity",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "role_group",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "role_group",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Ophalen",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "fct_export_week_parquet_sink",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
+		"parameters": {
+			"p_inRoot": {
+				"type": "string",
+				"defaultValue": "staging/StatistiekenCSV"
+			},
+			"p_outRoot": {
+				"type": "string",
+				"defaultValue": "final/Statistieken"
+			},
+			"p_overwrite": {
+				"type": "bool",
+				"defaultValue": false
+			}
+		},
 		"annotations": []
 	}
 }
