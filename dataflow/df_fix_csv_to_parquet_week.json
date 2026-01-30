@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ds_export_week_csv",
+						"referenceName": "Ophalen",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -28,10 +28,7 @@
 			],
 			"scriptLines": [
 				"parameters{",
-				"     p_outFolder as string,",
-				"     p_outFile as string,",
-				"     p_inFolder as string,",
-				"     p_inFile as string",
+				"     p_year_folder as string",
 				"}",
 				"source(output(",
 				"          Systeemhuis as string,",
@@ -54,12 +51,15 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 derive(FunctieId = replace(trim(toString(FunctieId)), ',', '.')) ~> derivedColumn1",
+				"     ignoreNoFilesFound: false,",
+				"     rowUrlColumn: 'OrigFileName',",
+				"     wildcardPaths:[(concat($p_year_folder, '/*.csv'))]) ~> source1",
+				"source1 derive(FunctieId = replace(trim(toString(FunctieId)), ',', '.'),",
+				"          ParquetFileName = replace(OrigFileName, '.csv', '.parquet')) ~> derivedColumn1",
 				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
-				"     partitionFileNames:[($p_outFile)],",
+				"     rowUrlColumn:'ParquetFileName',",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",

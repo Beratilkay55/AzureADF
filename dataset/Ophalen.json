@@ -1,5 +1,5 @@
 {
-	"name": "ds_export_week_csv",
+	"name": "Ophalen",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDataLakeStorage1",
@@ -21,8 +21,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "@dataset().FileName",
-				"folderPath": "@dataset().FolderPath",
+				"folderPath": {
+					"value": "staging/StatistiekenCSV\n",
+					"type": "Expression"
+				},
 				"fileSystem": "statistics"
 			},
 			"columnDelimiter": ";",
