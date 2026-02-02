@@ -71,7 +71,7 @@
 									"referenceName": "ref_csv_events_export_check",
 									"type": "DatasetReference",
 									"parameters": {
-										"Folder": "final/Statistieken/year=2026",
+										"Folder": "final/statistieken/year=2026",
 										"FileName": {
 											"value": "@concat('export_week_', string(item()), '.csv')",
 											"type": "Expression"
@@ -471,7 +471,7 @@
 						"referenceName": "fct_events_export_temp",
 						"type": "DatasetReference",
 						"parameters": {
-							"Folder": "@concat( 'final/Statistieken/Temp')"
+							"Folder": "@concat( 'final/statistieken/Temp')"
 						}
 					},
 					"enableLogging": false,
@@ -503,7 +503,8 @@
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
-						"enablePartitionDiscovery": false
+						"enablePartitionDiscovery": false,
+						"prefix": "week_"
 					}
 				}
 			}
