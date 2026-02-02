@@ -73,7 +73,7 @@
 									"parameters": {
 										"Folder": "final/statistieken/year=2026",
 										"FileName": {
-											"value": "@concat('export_week_', string(item()), '.csv')",
+											"value": "@concat('export_week_', string(item()), '.parquet')",
 											"type": "Expression"
 										}
 									}
@@ -502,8 +502,7 @@
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
-						"enablePartitionDiscovery": false,
-						"prefix": "week_"
+						"enablePartitionDiscovery": false
 					}
 				}
 			}
