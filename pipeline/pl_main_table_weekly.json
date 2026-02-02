@@ -168,8 +168,6 @@
 			{
 				"name": "Verwijder Tijdelijk Bestand",
 				"type": "Delete",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Execute Pipeline2",
@@ -202,6 +200,8 @@
 			{
 				"name": "Execute Pipeline1",
 				"type": "ExecutePipeline",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Verwijder Tijdelijk Bestand",
@@ -225,8 +225,6 @@
 			{
 				"name": "Execute Pipeline2",
 				"type": "ExecutePipeline",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Data Process",
