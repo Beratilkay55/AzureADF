@@ -14,7 +14,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"folderPath": {
-					"value": "staging/StatistiekenCSV\n",
+					"value": "staging/statistieken_csv\n",
 					"type": "Expression"
 				},
 				"fileSystem": "statistics"
