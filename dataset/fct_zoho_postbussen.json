@@ -13,7 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "zoho_gegevens_postbussen.parquet",
+				"fileName": "Zoho_Gegevens_Postbussen.parquet",
 				"folderPath": "final/zoho",
 				"fileSystem": "statistics"
 			},
