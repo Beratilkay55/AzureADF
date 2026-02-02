@@ -5,8 +5,6 @@
 			{
 				"name": "Script1",
 				"type": "Script",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Verwijder Tijdelijk Parquet",
@@ -40,8 +38,6 @@
 			{
 				"name": "ForEach1",
 				"type": "ForEach",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Set variable4",
@@ -206,8 +202,6 @@
 			{
 				"name": "Set CurrentWeek",
 				"type": "SetVariable",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Script_GetWeek",
@@ -232,8 +226,6 @@
 			{
 				"name": "Set WeekCounter",
 				"type": "SetVariable",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Set variable3",
@@ -255,8 +247,6 @@
 			{
 				"name": "Until1",
 				"type": "Until",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Set WeekCounter",
@@ -340,8 +330,6 @@
 			{
 				"name": "Set variable3",
 				"type": "SetVariable",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Set CurrentWeek",
@@ -366,8 +354,6 @@
 			{
 				"name": "Set variable4",
 				"type": "SetVariable",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Until1",
@@ -392,8 +378,6 @@
 			{
 				"name": "Script_GetWeek",
 				"type": "Script",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Script1",
@@ -427,8 +411,6 @@
 			{
 				"name": "Data_Process",
 				"type": "ExecuteDataFlow",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "ForEach1",
@@ -468,8 +450,6 @@
 			{
 				"name": "Verwijder Tijdelijk Parquet",
 				"type": "Delete",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Verwijder Tijdelijk Staging",
@@ -523,8 +503,7 @@
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
-						"enablePartitionDiscovery": false,
-						"prefix": "week_"
+						"enablePartitionDiscovery": false
 					}
 				}
 			}

@@ -34,7 +34,7 @@
 						"datasetParameters": {
 							"sink1": {
 								"Folder": {
-									"value": "@concat( 'staging/StatistiekenCSV/', 'year=', formatDateTime(convertFromUtc(utcNow(),'W. Europe Standard Time'),'yyyy'))",
+									"value": "@concat( 'staging/statistieken_csv/', 'year=', formatDateTime(convertFromUtc(utcNow(),'W. Europe Standard Time'),'yyyy'))",
 									"type": "Expression"
 								}
 							}
@@ -244,7 +244,7 @@
 					},
 					"waitOnCompletion": true,
 					"parameters": {
-						"p_inRoot": "staging/StatistiekenCSV",
+						"p_inRoot": "staging/statistieken_csv",
 						"p_outRoot": "final/statistieken",
 						"p_overwrite": false
 					}
