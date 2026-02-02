@@ -82,8 +82,7 @@
 									"exists"
 								],
 								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
+									"type": "AzureBlobStorageReadSettings",
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
