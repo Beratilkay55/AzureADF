@@ -1,0 +1,23 @@
+{
+	"name": "api_ref_subkantoren",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Api_Call"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "subkantoren.json",
+				"folderPath": "raw",
+				"fileSystem": "statistics"
+			}
+		},
+		"schema": {}
+	}
+}
