@@ -21,16 +21,18 @@
 		"schema": {
 			"type": "object",
 			"properties": {
-				"Naam": {
+				"Systeemhuis": {
 					"type": "array",
 					"items": {
-						"type": "string"
-					}
-				},
-				"Systeemhuis Prefix": {
-					"type": "array",
-					"items": {
-						"type": "string"
+						"type": "object",
+						"properties": {
+							"Naam": {
+								"type": "string"
+							},
+							"Prefix": {
+								"type": "string"
+							}
+						}
 					}
 				}
 			}

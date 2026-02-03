@@ -43,16 +43,10 @@
 					"name": "select1"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "select2"
 				},
 				{
 					"name": "flatten2"
-				},
-				{
-					"name": "derivedColumn2"
-				},
-				{
-					"name": "select2"
 				}
 			],
 			"scriptLines": [
@@ -64,8 +58,7 @@
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> source1",
 				"source(output(",
-				"          Naam as string[],",
-				"          {Systeemhuis Prefix} as string[]",
+				"          Systeemhuis as (Naam as string, Prefix as string)[]",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -82,23 +75,19 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"source2 derive(idxArr = mapIndex(Naam, #index)) ~> derivedColumn1",
-				"derivedColumn1 foldDown(unroll(idxArr),",
-				"     mapColumn(",
+				"flatten2 select(mapColumn(",
 				"          Naam,",
-				"          SysteemhuisPrefix = {Systeemhuis Prefix},",
-				"          idx = idxArr",
-				"     ),",
-				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: false) ~> flatten2",
-				"flatten2 derive(Naam_out = at(Naam, toInteger(idx)),",
-				"          Prefix_out = at(SysteemhuisPrefix, toInteger(idx))) ~> derivedColumn2",
-				"derivedColumn2 select(mapColumn(",
-				"          Naam = Naam_out,",
-				"          {Systeemhuis Prefix} = Prefix_out",
+				"          {Systeemhuis Prefix} = Prefix",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select2",
+				"source2 foldDown(unroll(Systeemhuis),",
+				"     mapColumn(",
+				"          Naam = Systeemhuis.Naam,",
+				"          Prefix = Systeemhuis.Prefix",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten2",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",

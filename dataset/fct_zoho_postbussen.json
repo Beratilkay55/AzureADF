@@ -14,7 +14,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "Zoho_Gegevens_Postbussen.parquet",
-				"folderPath": "final/Zoho",
+				"folderPath": "final/zoho",
 				"fileSystem": "statistics"
 			},
 			"compressionCodec": "snappy"

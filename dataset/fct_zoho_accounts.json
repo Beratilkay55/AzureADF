@@ -13,8 +13,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Zoho_Gegevens.parquet",
-				"folderPath": "final/Zoho",
+				"fileName": "zoho_gegevens.parquet",
+				"folderPath": "final/zoho",
 				"fileSystem": "statistics"
 			},
 			"compressionCodec": "snappy"

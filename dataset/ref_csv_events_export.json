@@ -27,6 +27,7 @@
 			"columnDelimiter": ";",
 			"compressionCodec": null,
 			"compressionLevel": "Optimal",
+			"encodingName": "UTF-8",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""

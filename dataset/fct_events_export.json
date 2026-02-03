@@ -24,7 +24,7 @@
 				},
 				"fileSystem": "statistics"
 			},
-			"columnDelimiter": ";",
+			"columnDelimiter": ",",
 			"compressionCodec": null,
 			"compressionLevel": "Optimal",
 			"escapeChar": "\\",
