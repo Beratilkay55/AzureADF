@@ -18,6 +18,40 @@
 				"fileSystem": "statistics"
 			}
 		},
-		"schema": {}
+		"schema": {
+			"type": "object",
+			"properties": {
+				"Einddatum": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"kantoorId_GebruikerId": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"kantoorId": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"GebruikerId": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"Naam Subkantoor": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		}
 	}
 }
