@@ -240,7 +240,7 @@
 					},
 					"waitOnCompletion": true,
 					"parameters": {
-						"p_inRoot": "staging/StatistiekenCSV",
+						"p_inRoot": "staging/statistieken_csv",
 						"p_outRoot": "final/statistieken",
 						"p_overwrite": false
 					}
