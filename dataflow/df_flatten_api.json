@@ -40,6 +40,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "sink2"
+				},
+				{
+					"dataset": {
+						"referenceName": "ref_subkantoor_actief",
+						"type": "DatasetReference"
+					},
+					"name": "sink3"
 				}
 			],
 			"transformations": [
@@ -57,6 +64,9 @@
 				},
 				{
 					"name": "flatten3"
+				},
+				{
+					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
@@ -75,11 +85,7 @@
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> source2",
 				"source(output(",
-				"          Einddatum as string[],",
-				"          kantoorId_GebruikerId as string[],",
-				"          kantoorId as string[],",
-				"          GebruikerId as string[],",
-				"          {Naam Subkantoor} as string[]",
+				"          Subkantoren as (KantoorId as string[], GebruikerId as string[], Subkantoor as string[])",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -110,8 +116,14 @@
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten2",
 				"source3 foldDown(unroll(),",
+				"     mapColumn(",
+				"          Subkantoren = Subkantoren.Subkantoor,",
+				"          KantoorId = Subkantoren.KantoorId,",
+				"          GebruikerId = Subkantoren.GebruikerId",
+				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten3",
+				"flatten3 derive(KantoorGebruikerId = concat(toString(KantoorId), \"_\", toString(GebruikerId))) ~> derivedColumn1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -136,7 +148,14 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink2"
+				"     partitionBy('hash', 1)) ~> sink2",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink3"
 			]
 		}
 	}
