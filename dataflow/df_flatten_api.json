@@ -85,7 +85,7 @@
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> source2",
 				"source(output(",
-				"          Subkantoren as (KantoorId as string[], GebruikerId as string[], Subkantoor as string[])",
+				"          Subkantoor as (KantoorId as string, Subkantoor_Naam as string, GebruikerId as string)[]",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",

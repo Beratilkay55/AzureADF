@@ -21,24 +21,18 @@
 		"schema": {
 			"type": "object",
 			"properties": {
-				"Subkantoren": {
-					"type": "object",
-					"properties": {
-						"KantoorId": {
-							"type": "array",
-							"items": {
+				"Subkantoor": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"KantoorId": {
 								"type": "string"
-							}
-						},
-						"GebruikerId": {
-							"type": "array",
-							"items": {
+							},
+							"Subkantoor_Naam": {
 								"type": "string"
-							}
-						},
-						"Subkantoor": {
-							"type": "array",
-							"items": {
+							},
+							"GebruikerId": {
 								"type": "string"
 							}
 						}
