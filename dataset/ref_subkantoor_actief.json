@@ -13,8 +13,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Subkantoor_Final.csv",
-				"folderPath": "ref",
+				"fileName": "subkantoren",
+				"folderPath": "final",
 				"fileSystem": "statistics"
 			},
 			"columnDelimiter": ",",
