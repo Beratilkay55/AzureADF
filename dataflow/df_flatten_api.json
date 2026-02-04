@@ -63,10 +63,10 @@
 					"name": "flatten2"
 				},
 				{
-					"name": "flatten3"
+					"name": "derivedColumn1"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "flatten3"
 				}
 			],
 			"scriptLines": [
@@ -115,13 +115,15 @@
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten2",
-				"source3 foldDown(unroll(),",
+				"flatten3 derive(KantoorGebruikerId = concat(toString(KantoorId), \"_\", toString(GebruikerId))) ~> derivedColumn1",
+				"source3 foldDown(unroll(Subkantoor, Subkantoor),",
 				"     mapColumn(",
-				"          Subkantoor",
+				"          KantoorId = Subkantoor.KantoorId,",
+				"          Subkantoor = Subkantoor.Subkantoor_Naam,",
+				"          GebruikerId = Subkantoor.GebruikerId",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten3",
-				"flatten3 derive(KantoorGebruikerId = concat(toString(KantoorId), \"_\", toString(GebruikerId))) ~> derivedColumn1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
