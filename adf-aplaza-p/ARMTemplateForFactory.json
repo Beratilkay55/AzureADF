@@ -464,7 +464,7 @@
 						"type": "ExecuteDataFlow",
 						"dependsOn": [
 							{
-								"activity": "Systeemhuizen",
+								"activity": "Subkantoren",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -486,8 +486,10 @@
 								"datasetParameters": {
 									"source1": {},
 									"source2": {},
+									"source3": {},
 									"sink1": {},
-									"sink2": {}
+									"sink2": {},
+									"sink3": {}
 								}
 							},
 							"staging": {},
@@ -497,6 +499,64 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "Subkantoren",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Systeemhuizen",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "POST",
+								"requestBody": "{\n  \"apikey\": \"+SjtTqVK5IJPiZBSJEFEY+L12bPAaGkvhqBcVEueCHw=\"\n}",
+								"additionalHeaders": {
+									"Content-Type": "application/json"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "rest_Triggre",
+								"type": "DatasetReference",
+								"parameters": {
+									"relativeURL": "lab/interfaces/rest/subkantoren/subkantoren"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "api_ref_subkantoren",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"policy": {
@@ -514,7 +574,309 @@
 				"[concat(variables('factoryId'), '/datasets/rest_Triggre')]",
 				"[concat(variables('factoryId'), '/datasets/api_ref_myid_json')]",
 				"[concat(variables('factoryId'), '/datasets/api_ref_systeemhuis_json')]",
-				"[concat(variables('factoryId'), '/dataflows/df_flatten_api')]"
+				"[concat(variables('factoryId'), '/dataflows/df_flatten_api')]",
+				"[concat(variables('factoryId'), '/datasets/api_ref_subkantoren')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_convert_week_csv_to_parquet')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CSV_TO_Parquet",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": {
+										"value": "@concat(pipeline().parameters.p_inRoot, '/year=*')\n",
+										"type": "Expression"
+									},
+									"wildcardFileName": "export_week_*.csv",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Systeemhuis",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Systeemhuis",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "EventNaam",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "EventNaam",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "KantoorId",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "KantoorId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "MaatschappijId",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "MaatschappijId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Verzekeraar",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Verzekeraar",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Jaar",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Jaar",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Week",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Week",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Message",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Message",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "TimeStamp",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TimeStamp",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "GebruikerId",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "GebruikerId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "FunctieId",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "FunctieId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Productomschrijving",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Productomschrijving",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "FunctieSoort",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "FunctieSoort",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "FunctieType",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "FunctieType",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "KantoorGebruikerId",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "KantoorGebruikerId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "User_identity",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "User_identity",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "role_group",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "role_group",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "stg_get_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "fct_export_week_parquet_sink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"p_inRoot": {
+						"type": "string",
+						"defaultValue": "staging/statistieken_csv"
+					},
+					"p_outRoot": {
+						"type": "string",
+						"defaultValue": "final/statistieken"
+					},
+					"p_overwrite": {
+						"type": "bool",
+						"defaultValue": false
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/stg_get_csv')]",
+				"[concat(variables('factoryId'), '/datasets/fct_export_week_parquet_sink')]"
 			]
 		},
 		{
@@ -565,7 +927,7 @@
 									"MyIDFilter": {},
 									"sink1": {
 										"Folder": {
-											"value": "@concat( 'final/Statistieken/', 'year=', formatDateTime(convertFromUtc(utcNow(),'W. Europe Standard Time'),'yyyy'))",
+											"value": "@concat( 'staging/statistieken_csv/', 'year=', formatDateTime(convertFromUtc(utcNow(),'W. Europe Standard Time'),'yyyy'))",
 											"type": "Expression"
 										}
 									}
@@ -713,7 +1075,7 @@
 						"type": "Delete",
 						"dependsOn": [
 							{
-								"activity": "Data Process",
+								"activity": "Execute Pipeline2",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -764,6 +1126,34 @@
 							"waitOnCompletion": true,
 							"parameters": {}
 						}
+					},
+					{
+						"name": "Execute Pipeline2",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Data Process",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "pl_convert_week_csv_to_parquet",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"p_inRoot": "staging/statistieken_csv",
+								"p_outRoot": "final/statistieken",
+								"p_overwrite": false
+							}
+						}
 					}
 				],
 				"policy": {
@@ -782,7 +1172,8 @@
 				"[concat(variables('factoryId'), '/dataflows/df_data_process_load')]",
 				"[concat(variables('factoryId'), '/datasets/stg_events_current')]",
 				"[concat(variables('factoryId'), '/dataflows/df_subkantoren_ingest')]",
-				"[concat(variables('factoryId'), '/pipelines/pl_table_realtime')]"
+				"[concat(variables('factoryId'), '/pipelines/pl_table_realtime')]",
+				"[concat(variables('factoryId'), '/pipelines/pl_convert_week_csv_to_parquet')]"
 			]
 		},
 		{
@@ -860,9 +1251,9 @@
 											"referenceName": "ref_csv_events_export_check",
 											"type": "DatasetReference",
 											"parameters": {
-												"Folder": "final/Statistieken/year=2026",
+												"Folder": "final/statistieken/year=2026",
 												"FileName": {
-													"value": "@concat('export_week_', string(item()), '.csv')",
+													"value": "@concat('export_week_', string(item()), '.parquet')",
 													"type": "Expression"
 												}
 											}
@@ -871,7 +1262,7 @@
 											"exists"
 										],
 										"storeSettings": {
-											"type": "AzureBlobFSReadSettings",
+											"type": "AzureBlobStorageReadSettings",
 											"recursive": true,
 											"enablePartitionDiscovery": false
 										},
@@ -1235,7 +1626,7 @@
 									"MyIDFilter": {},
 									"sink1": {
 										"Folder": {
-											"value": "@concat( 'final/Statistieken/Temp')",
+											"value": "@concat( 'final/statistieken/Temp')",
 											"type": "Expression"
 										}
 									}
@@ -1273,7 +1664,7 @@
 								"referenceName": "fct_events_export_temp",
 								"type": "DatasetReference",
 								"parameters": {
-									"Folder": "@concat( 'final/Statistieken/Temp')"
+									"Folder": "@concat( 'final/statistieken/Temp')"
 								}
 							},
 							"enableLogging": false,
@@ -2499,6 +2890,55 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/api_ref_subkantoren')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Api_Call"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "subkantoren.json",
+						"folderPath": "raw",
+						"fileSystem": "statistics"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"Subkantoor": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"KantoorId": {
+										"type": "string"
+									},
+									"Subkantoor_Naam": {
+										"type": "string"
+									},
+									"GebruikerId": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/api_ref_systeemhuis')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2564,16 +3004,18 @@
 				"schema": {
 					"type": "object",
 					"properties": {
-						"Naam": {
+						"Systeemhuis": {
 							"type": "array",
 							"items": {
-								"type": "string"
-							}
-						},
-						"Systeemhuis Prefix": {
-							"type": "array",
-							"items": {
-								"type": "string"
+								"type": "object",
+								"properties": {
+									"Naam": {
+										"type": "string"
+									},
+									"Prefix": {
+										"type": "string"
+									}
+								}
 							}
 						}
 					}
@@ -2666,7 +3108,7 @@
 						},
 						"fileSystem": "statistics"
 					},
-					"columnDelimiter": ";",
+					"columnDelimiter": ",",
 					"compressionCodec": null,
 					"compressionLevel": "Optimal",
 					"escapeChar": "\\",
@@ -3018,12 +3460,12 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/fct_zoho_accounts')]",
+			"name": "[concat(parameters('factoryName'), '/fct_export_week_parquet_sink')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "dlsaplazap",
+					"referenceName": "AzureDataLakeStorage1",
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
@@ -3034,8 +3476,39 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "Zoho_Gegevens.parquet",
-						"folderPath": "final/Zoho",
+						"folderPath": {
+							"value": "final/statistieken",
+							"type": "Expression"
+						},
+						"fileSystem": "statistics"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/fct_zoho_accounts')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Zoho"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "zoho_gegevens.parquet",
+						"folderPath": "final/zoho",
 						"fileSystem": "statistics"
 					},
 					"compressionCodec": "snappy"
@@ -3177,7 +3650,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Exports"
+					"name": "Zoho"
 				},
 				"annotations": [],
 				"type": "Parquet",
@@ -3185,7 +3658,7 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": "Zoho_Gegevens_Postbussen.parquet",
-						"folderPath": "final/Zoho",
+						"folderPath": "final/zoho",
 						"fileSystem": "statistics"
 					},
 					"compressionCodec": "snappy"
@@ -3298,6 +3771,7 @@
 					"columnDelimiter": ";",
 					"compressionCodec": null,
 					"compressionLevel": "Optimal",
+					"encodingName": "UTF-8",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
@@ -3571,8 +4045,8 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "Subkantoor_Final.csv",
-						"folderPath": "ref",
+						"fileName": "subkantoren",
+						"folderPath": "final",
 						"fileSystem": "statistics"
 					},
 					"columnDelimiter": ",",
@@ -3851,7 +4325,7 @@
 							"value": "@dataset().FileName",
 							"type": "Expression"
 						},
-						"folderPath": "staging",
+						"folderPath": "staging/tijdelijke_parquet",
 						"fileSystem": "statistics"
 					},
 					"compressionCodec": "snappy"
@@ -3928,7 +4402,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "staging",
+						"folderPath": "staging/tijdelijke_parquet",
 						"fileSystem": "statistics"
 					},
 					"compressionCodec": "snappy"
@@ -4064,6 +4538,109 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/stg_get_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Exports"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "staging/statistieken_csv\n",
+							"type": "Expression"
+						},
+						"fileSystem": "statistics"
+					},
+					"columnDelimiter": ";",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Systeemhuis",
+						"type": "String"
+					},
+					{
+						"name": "EventNaam",
+						"type": "String"
+					},
+					{
+						"name": "KantoorId",
+						"type": "String"
+					},
+					{
+						"name": "MaatschappijId",
+						"type": "String"
+					},
+					{
+						"name": "Verzekeraar",
+						"type": "String"
+					},
+					{
+						"name": "Jaar",
+						"type": "String"
+					},
+					{
+						"name": "Week",
+						"type": "String"
+					},
+					{
+						"name": "Message",
+						"type": "String"
+					},
+					{
+						"name": "TimeStamp",
+						"type": "String"
+					},
+					{
+						"name": "GebruikerId",
+						"type": "String"
+					},
+					{
+						"name": "FunctieId",
+						"type": "String"
+					},
+					{
+						"name": "Productomschrijving",
+						"type": "String"
+					},
+					{
+						"name": "FunctieSoort",
+						"type": "String"
+					},
+					{
+						"name": "FunctieType",
+						"type": "String"
+					},
+					{
+						"name": "KantoorGebruikerId",
+						"type": "String"
+					},
+					{
+						"name": "User_identity",
+						"type": "String"
+					},
+					{
+						"name": "role_group",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
 			]
 		},
 		{
@@ -4534,7 +5111,8 @@
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select1",
 						"FilterMessage0 derive({KantoorId+GebruikId} = replace(concat(KantoorId, '_', GebruikerId), '-', '_'),",
-						"          role_group = concat( toString({Systeemhuis Prefix}),     '_',     toString(KantoorId) )) ~> derivedColumn5",
+						"          role_group = concat( toString({Systeemhuis Prefix}),     '_',     toString(KantoorId) ),",
+						"          functie_id = concat('\\t', toString(functie_id))) ~> derivedColumn5",
 						"union1 derive(middenstuk = split(gim_function, \".\")[2],",
 						"          KantoorId = split(user_identity, '_')[2],",
 						"          GebruikerId = substring(    user_identity,    locate('_', user_identity, locate('_', user_identity) + 1) + 1),",
@@ -4736,7 +5314,7 @@
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     format: 'parquet',",
-						"     wildcardPaths:['staging/week_*.parquet']) ~> Hoofdtabel1",
+						"     wildcardPaths:['staging/tijdelijke_parquet/week_*.parquet']) ~> Hoofdtabel1",
 						"source(output(",
 						"          Code as string,",
 						"          Verzekeraar as string",
@@ -4761,7 +5339,7 @@
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     format: 'parquet',",
-						"     wildcardPaths:['staging/week_*.parquet']) ~> Hoofdtabel2",
+						"     wildcardPaths:['staging/tijdelijke_parquet/week_*.parquet']) ~> Hoofdtabel2",
 						"source(output(",
 						"          Verzekeraar as string,",
 						"          Code as string,",
@@ -4794,7 +5372,7 @@
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     format: 'parquet',",
-						"     wildcardPaths:['staging/week_*.parquet']) ~> Hoofdtabel3",
+						"     wildcardPaths:['staging/tijdelijke_parquet/week_*.parquet']) ~> Hoofdtabel3",
 						"source(output(",
 						"          Code as string,",
 						"          maatschappij_ID as string,",
@@ -5116,6 +5694,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "source2"
+						},
+						{
+							"dataset": {
+								"referenceName": "api_ref_subkantoren",
+								"type": "DatasetReference"
+							},
+							"name": "source3"
 						}
 					],
 					"sinks": [
@@ -5132,6 +5717,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "sink2"
+						},
+						{
+							"dataset": {
+								"referenceName": "ref_subkantoor_actief",
+								"type": "DatasetReference"
+							},
+							"name": "sink3"
 						}
 					],
 					"transformations": [
@@ -5142,16 +5734,16 @@
 							"name": "select1"
 						},
 						{
-							"name": "derivedColumn1"
+							"name": "select2"
 						},
 						{
 							"name": "flatten2"
 						},
 						{
-							"name": "derivedColumn2"
+							"name": "derivedColumn1"
 						},
 						{
-							"name": "select2"
+							"name": "flatten3"
 						}
 					],
 					"scriptLines": [
@@ -5163,13 +5755,19 @@
 						"     ignoreNoFilesFound: false,",
 						"     documentForm: 'documentPerLine') ~> source1",
 						"source(output(",
-						"          Naam as string[],",
-						"          {Systeemhuis Prefix} as string[]",
+						"          Systeemhuis as (Naam as string, Prefix as string)[]",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     documentForm: 'documentPerLine') ~> source2",
+						"source(output(",
+						"          Subkantoor as (KantoorId as string, Subkantoor_Naam as string, GebruikerId as string)[]",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source3",
 						"source1 foldDown(unroll(filter),",
 						"     mapColumn(",
 						"          filter",
@@ -5181,23 +5779,28 @@
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select1",
-						"source2 derive(idxArr = mapIndex(Naam, #index)) ~> derivedColumn1",
-						"derivedColumn1 foldDown(unroll(idxArr),",
-						"     mapColumn(",
+						"flatten2 select(mapColumn(",
 						"          Naam,",
-						"          SysteemhuisPrefix = {Systeemhuis Prefix},",
-						"          idx = idxArr",
-						"     ),",
-						"     skipDuplicateMapInputs: false,",
-						"     skipDuplicateMapOutputs: false) ~> flatten2",
-						"flatten2 derive(Naam_out = at(Naam, toInteger(idx)),",
-						"          Prefix_out = at(SysteemhuisPrefix, toInteger(idx))) ~> derivedColumn2",
-						"derivedColumn2 select(mapColumn(",
-						"          Naam = Naam_out,",
-						"          {Systeemhuis Prefix} = Prefix_out",
+						"          {Systeemhuis Prefix} = Prefix",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select2",
+						"source2 foldDown(unroll(Systeemhuis),",
+						"     mapColumn(",
+						"          Naam = Systeemhuis.Naam,",
+						"          Prefix = Systeemhuis.Prefix",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten2",
+						"flatten3 derive(KantoorGebruikerId = concat(toString(KantoorId), \"_\", toString(GebruikerId))) ~> derivedColumn1",
+						"source3 foldDown(unroll(Subkantoor, Subkantoor),",
+						"     mapColumn(",
+						"          KantoorId = Subkantoor.KantoorId,",
+						"          Subkantoor = Subkantoor.Subkantoor_Naam,",
+						"          GebruikerId = Subkantoor.GebruikerId",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten3",
 						"select1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -5222,15 +5825,26 @@
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink2"
+						"     partitionBy('hash', 1)) ~> sink2",
+						"derivedColumn1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['subkantoor.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink3"
 					]
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/api_ref_myid_json')]",
 				"[concat(variables('factoryId'), '/datasets/api_ref_systeemhuis_json')]",
+				"[concat(variables('factoryId'), '/datasets/api_ref_subkantoren')]",
 				"[concat(variables('factoryId'), '/datasets/api_ref_myid')]",
-				"[concat(variables('factoryId'), '/datasets/api_ref_systeemhuis')]"
+				"[concat(variables('factoryId'), '/datasets/api_ref_systeemhuis')]",
+				"[concat(variables('factoryId'), '/datasets/ref_subkantoor_actief')]"
 			]
 		},
 		{
@@ -5530,7 +6144,7 @@
 						"          Postbus_Nummer as string",
 						"     ),",
 						"     format: 'parquet',",
-						"     partitionFileNames:['Zoho_Gegevens.parquet'],",
+						"     partitionFileNames:['zoho_gegevens.parquet'],",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",

@@ -29,6 +29,102 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/fct_zoho_postbussen')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Zoho"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Zoho_Gegevens_Postbussen.parquet",
+						"folderPath": "final/zoho",
+						"fileSystem": "statistics"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/raw_statistiek_ingest')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Exports"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "Transacties",
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Statistieken APLAZA week.xlsx",
+						"folderPath": "raw/ingest",
+						"fileSystem": "statistics"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"name": "EventId",
+						"type": "String"
+					},
+					{
+						"name": "MachineName",
+						"type": "String"
+					},
+					{
+						"name": "Title",
+						"type": "String"
+					},
+					{
+						"name": "TimeStamp",
+						"type": "String"
+					},
+					{
+						"name": "Message",
+						"type": "String"
+					},
+					{
+						"name": "UserIdentity",
+						"type": "String"
+					},
+					{
+						"name": "GimFunction",
+						"type": "String"
+					},
+					{
+						"name": "Week",
+						"type": "String"
+					},
+					{
+						"name": "Year",
+						"type": "String"
+					},
+					{
+						"name": "MyAand",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ref_csv_events_export')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -59,6 +155,7 @@
 					"columnDelimiter": ";",
 					"compressionCodec": null,
 					"compressionLevel": "Optimal",
+					"encodingName": "UTF-8",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
@@ -320,8 +417,8 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "Subkantoor_Final.csv",
-						"folderPath": "ref",
+						"fileName": "subkantoren",
+						"folderPath": "final",
 						"fileSystem": "statistics"
 					},
 					"columnDelimiter": ",",
@@ -588,7 +685,7 @@
 							"value": "@dataset().FileName",
 							"type": "Expression"
 						},
-						"folderPath": "staging",
+						"folderPath": "staging/tijdelijke_parquet",
 						"fileSystem": "statistics"
 					},
 					"compressionCodec": "snappy"
@@ -663,7 +760,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "staging",
+						"folderPath": "staging/tijdelijke_parquet",
 						"fileSystem": "statistics"
 					},
 					"compressionCodec": "snappy"
@@ -798,6 +895,107 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/stg_get_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Exports"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "staging/statistieken_csv\n",
+							"type": "Expression"
+						},
+						"fileSystem": "statistics"
+					},
+					"columnDelimiter": ";",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Systeemhuis",
+						"type": "String"
+					},
+					{
+						"name": "EventNaam",
+						"type": "String"
+					},
+					{
+						"name": "KantoorId",
+						"type": "String"
+					},
+					{
+						"name": "MaatschappijId",
+						"type": "String"
+					},
+					{
+						"name": "Verzekeraar",
+						"type": "String"
+					},
+					{
+						"name": "Jaar",
+						"type": "String"
+					},
+					{
+						"name": "Week",
+						"type": "String"
+					},
+					{
+						"name": "Message",
+						"type": "String"
+					},
+					{
+						"name": "TimeStamp",
+						"type": "String"
+					},
+					{
+						"name": "GebruikerId",
+						"type": "String"
+					},
+					{
+						"name": "FunctieId",
+						"type": "String"
+					},
+					{
+						"name": "Productomschrijving",
+						"type": "String"
+					},
+					{
+						"name": "FunctieSoort",
+						"type": "String"
+					},
+					{
+						"name": "FunctieType",
+						"type": "String"
+					},
+					{
+						"name": "KantoorGebruikerId",
+						"type": "String"
+					},
+					{
+						"name": "User_identity",
+						"type": "String"
+					},
+					{
+						"name": "role_group",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzurePostgreSql1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -826,613 +1024,303 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/fct_aplaza_id')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/pl_convert_week_csv_to_parquet')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzurePostgreSql1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Main table"
-				},
-				"annotations": [],
-				"type": "AzurePostgreSqlTable",
-				"schema": [
+				"activities": [
 					{
-						"name": "role_group",
-						"type": "character varying",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "role_group_aplaza_id",
-						"type": "character varying",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "username",
-						"type": "character varying",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "aplaza_id",
-						"type": "character varying",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "id",
-						"type": "character varying",
-						"precision": 0,
-						"scale": 0
+						"name": "CSV_TO_Parquet",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": {
+										"value": "@concat(pipeline().parameters.p_inRoot, '/year=*')\n",
+										"type": "Expression"
+									},
+									"wildcardFileName": "export_week_*.csv",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Systeemhuis",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Systeemhuis",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "EventNaam",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "EventNaam",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "KantoorId",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "KantoorId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "MaatschappijId",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "MaatschappijId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Verzekeraar",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Verzekeraar",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Jaar",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Jaar",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Week",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Week",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Message",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Message",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "TimeStamp",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TimeStamp",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "GebruikerId",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "GebruikerId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "FunctieId",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "FunctieId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Productomschrijving",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Productomschrijving",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "FunctieSoort",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "FunctieSoort",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "FunctieType",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "FunctieType",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "KantoorGebruikerId",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "KantoorGebruikerId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "User_identity",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "User_identity",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "role_group",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "role_group",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "stg_get_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "fct_export_week_parquet_sink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
-				"typeProperties": {
-					"schema": "usermgmt",
-					"table": "v_get_aplaza_ids"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzurePostgreSql1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/fct_events_sql')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzurePostgreSql1",
-					"type": "LinkedServiceReference"
+				"policy": {
+					"elapsedTimeMetric": {}
 				},
-				"folder": {
-					"name": "Main table"
-				},
-				"annotations": [],
-				"type": "AzurePostgreSqlTable",
-				"schema": [
-					{
-						"name": "id",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
+				"parameters": {
+					"p_inRoot": {
+						"type": "string",
+						"defaultValue": "staging/statistieken_csv"
 					},
-					{
-						"name": "gim_object_id",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
+					"p_outRoot": {
+						"type": "string",
+						"defaultValue": "final/statistieken"
 					},
-					{
-						"name": "event_id",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "message",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "user_identity",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "gim_function",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "gim_function_number",
-						"type": "integer",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "week",
-						"type": "integer",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "jaar",
-						"type": "integer",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "my_aand",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "last_modified_at",
-						"type": "timestamp with time zone",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "created_at",
-						"type": "timestamp with time zone",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "source",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "aplaza_id",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
+					"p_overwrite": {
+						"type": "bool",
+						"defaultValue": false
 					}
-				],
-				"typeProperties": {
-					"schema": "statistics",
-					"table": "exceptions"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzurePostgreSql1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/fct_events_sql_errors')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzurePostgreSql1",
-					"type": "LinkedServiceReference"
 				},
-				"folder": {
-					"name": "Main table"
-				},
-				"annotations": [],
-				"type": "AzurePostgreSqlTable",
-				"schema": [
-					{
-						"name": "id",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "gim_object_id",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "event_id",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "message",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "user_identity",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "gim_function",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "gim_function_number",
-						"type": "integer",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "week",
-						"type": "integer",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "jaar",
-						"type": "integer",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "my_aand",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "last_modified_at",
-						"type": "timestamp with time zone",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "created_at",
-						"type": "timestamp with time zone",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "source",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "aplaza_id",
-						"type": "text",
-						"precision": 0,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "statistics",
-					"table": "exceptions"
-				}
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzurePostgreSql1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/df_data_process_final_table')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "stg_events_current",
-								"type": "DatasetReference"
-							},
-							"name": "Hoofdtabel1"
-						},
-						{
-							"dataset": {
-								"referenceName": "ref_verzekeraar",
-								"type": "DatasetReference"
-							},
-							"name": "Verzekeraar"
-						},
-						{
-							"dataset": {
-								"referenceName": "stg_events_current",
-								"type": "DatasetReference"
-							},
-							"name": "Hoofdtabel2"
-						},
-						{
-							"dataset": {
-								"referenceName": "ref_verzekeraar_31",
-								"type": "DatasetReference"
-							},
-							"name": "Verzekeraar31"
-						},
-						{
-							"dataset": {
-								"referenceName": "ref_producten",
-								"type": "DatasetReference"
-							},
-							"name": "Producten"
-						},
-						{
-							"dataset": {
-								"referenceName": "stg_events_current",
-								"type": "DatasetReference"
-							},
-							"name": "Hoofdtabel3"
-						},
-						{
-							"dataset": {
-								"referenceName": "ref_verzekeraar_h742_n741",
-								"type": "DatasetReference"
-							},
-							"name": "VerzekeraarH742N741"
-						},
-						{
-							"dataset": {
-								"referenceName": "ref_functies",
-								"type": "DatasetReference"
-							},
-							"name": "Functies"
-						},
-						{
-							"dataset": {
-								"referenceName": "api_ref_systeemhuis",
-								"type": "DatasetReference"
-							},
-							"name": "Systeemhuis"
-						},
-						{
-							"dataset": {
-								"referenceName": "api_ref_myid",
-								"type": "DatasetReference"
-							},
-							"name": "MyIDFilter"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "ref_csv_events_export",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Niet31"
-						},
-						{
-							"name": "join1"
-						},
-						{
-							"name": "Wel31"
-						},
-						{
-							"name": "join2"
-						},
-						{
-							"name": "union1"
-						},
-						{
-							"name": "MaatschappijID"
-						},
-						{
-							"name": "H742N741"
-						},
-						{
-							"name": "join5"
-						},
-						{
-							"name": "ProductenJoin"
-						},
-						{
-							"name": "FunctiesJoin"
-						},
-						{
-							"name": "select1"
-						},
-						{
-							"name": "derivedColumn5"
-						},
-						{
-							"name": "NieuweKolommen"
-						},
-						{
-							"name": "FilterMessage0"
-						},
-						{
-							"name": "SysteemhuizenJoin"
-						},
-						{
-							"name": "FilterMyID"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     p_week as string",
-						"}",
-						"source(output(",
-						"          event_id as string,",
-						"          message as string,",
-						"          user_identity as string,",
-						"          gim_function as string,",
-						"          gim_function_number as integer,",
-						"          week as integer,",
-						"          jaar as integer,",
-						"          my_aand as string,",
-						"          confirmation_at as string,",
-						"          functie_id as string,",
-						"          my_aand_user as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> Hoofdtabel1",
-						"source(output(",
-						"          Code as string,",
-						"          Verzekeraar as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> Verzekeraar",
-						"source(output(",
-						"          event_id as string,",
-						"          message as string,",
-						"          user_identity as string,",
-						"          gim_function as string,",
-						"          gim_function_number as integer,",
-						"          week as integer,",
-						"          jaar as integer,",
-						"          my_aand as string,",
-						"          confirmation_at as string,",
-						"          functie_id as string,",
-						"          my_aand_user as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> Hoofdtabel2",
-						"source(output(",
-						"          Verzekeraar as string,",
-						"          Code as string,",
-						"          maatschappij_ID as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> Verzekeraar31",
-						"source(output(",
-						"          {Product GIM code} as string,",
-						"          {Product omschrijving} as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> Producten",
-						"source(output(",
-						"          event_id as string,",
-						"          message as string,",
-						"          user_identity as string,",
-						"          gim_function as string,",
-						"          gim_function_number as integer,",
-						"          week as integer,",
-						"          jaar as integer,",
-						"          my_aand as string,",
-						"          confirmation_at as string,",
-						"          functie_id as string,",
-						"          my_aand_user as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> Hoofdtabel3",
-						"source(output(",
-						"          Code as string,",
-						"          maatschappij_ID as string,",
-						"          Verzekeraar as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> VerzekeraarH742N741",
-						"source(output(",
-						"          Code as string,",
-						"          FunctieSoort as string,",
-						"          FunctieType as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> Functies",
-						"source(output(",
-						"          Naam as string,",
-						"          {Systeemhuis Prefix} as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> Systeemhuis",
-						"source(output(",
-						"          filter as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> MyIDFilter",
-						"Hoofdtabel1 filter(gim_function_number != 31,",
-						"     partitionBy('hash', 1)) ~> Niet31",
-						"MaatschappijID, Verzekeraar join(maatschappij_ID == Code,",
-						"     joinType:'left',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> join1",
-						"Hoofdtabel2 filter(gim_function_number == 31 && my_aand != 'H742' && my_aand != 'N741') ~> Wel31",
-						"Wel31, Verzekeraar31 join(my_aand == Code,",
-						"     joinType:'left',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> join2",
-						"join1, join2, join5 union(byName: true)~> union1",
-						"Niet31 derive(maatschappij_ID = toString(gim_function_number)) ~> MaatschappijID",
-						"Hoofdtabel3 filter(gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741')) ~> H742N741",
-						"H742N741, VerzekeraarH742N741 join(startsWith(my_aand_user, Code),",
-						"     joinType:'cross',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     partitionBy('hash', 1),",
-						"     broadcast: 'auto')~> join5",
-						"NieuweKolommen, Producten join(middenstuk == {Product GIM code},",
-						"     joinType:'left',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> ProductenJoin",
-						"SysteemhuizenJoin, Functies join(functie_id == Functies@Code,",
-						"     joinType:'left',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> FunctiesJoin",
-						"derivedColumn5 select(mapColumn(",
-						"          Systeemhuis = Naam,",
-						"          EventNaam,",
-						"          KantoorId,",
-						"          MaatschappijId = maatschappij_ID,",
-						"          Verzekeraar,",
-						"          Jaar = jaar,",
-						"          Week = week,",
-						"          Message = message,",
-						"          TimeStamp = confirmation_at,",
-						"          GebruikerId,",
-						"          FunctieId = functie_id,",
-						"          Productomschrijving = {Product omschrijving},",
-						"          FunctieSoort,",
-						"          FunctieType,",
-						"          KantoorGebruikerId = {KantoorId+GebruikId},",
-						"          User_identity = user_identity,",
-						"          role_group,",
-						"          my_aand,",
-						"          gim_function",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select1",
-						"FilterMessage0 derive({KantoorId+GebruikId} = replace(concat(KantoorId, '_', GebruikerId), '-', '_'),",
-						"          role_group = concat( toString({Systeemhuis Prefix}),     '_',     toString(KantoorId) )) ~> derivedColumn5",
-						"union1 derive(middenstuk = split(gim_function, \".\")[2],",
-						"          KantoorId = split(user_identity, '_')[2],",
-						"          GebruikerId = substring(    user_identity,    locate('_', user_identity, locate('_', user_identity) + 1) + 1),",
-						"          Systeemhuis = split(user_identity, '_')[1],",
-						"          EventNaam = case(    event_id == '43', 'Transacties',    event_id == '45', 'Transacties',    event_id == '49', 'Transacties',    event_id == '73', 'Berichten',    event_id == '74', 'Documenten',    'Onbekend')) ~> NieuweKolommen",
-						"FilterMyID filter(!(",
-						"  (event_id == '73' || event_id == '74')",
-						"  && message == '0'",
-						") && event_id != '43') ~> FilterMessage0",
-						"ProductenJoin, Systeemhuis join(Systeemhuis == {Systeemhuis Prefix},",
-						"     joinType:'left',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> SysteemhuizenJoin",
-						"FunctiesJoin, MyIDFilter exists(maatschappij_ID == filter,",
-						"     negate:true,",
-						"     broadcast: 'auto')~> FilterMyID",
-						"select1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:[(concat('export_week_', $p_week, '.csv'))],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/stg_events_current')]",
-				"[concat(variables('factoryId'), '/datasets/ref_verzekeraar')]",
-				"[concat(variables('factoryId'), '/datasets/ref_verzekeraar_31')]",
-				"[concat(variables('factoryId'), '/datasets/ref_producten')]",
-				"[concat(variables('factoryId'), '/datasets/ref_verzekeraar_h742_n741')]",
-				"[concat(variables('factoryId'), '/datasets/ref_functies')]",
-				"[concat(variables('factoryId'), '/datasets/ref_csv_events_export')]"
+				"[concat(variables('factoryId'), '/datasets/stg_get_csv')]"
 			]
 		}
 	]

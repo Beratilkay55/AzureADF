@@ -961,6 +961,55 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/api_ref_subkantoren')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Api_Call"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "subkantoren.json",
+						"folderPath": "raw",
+						"fileSystem": "statistics"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"Subkantoor": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"KantoorId": {
+										"type": "string"
+									},
+									"Subkantoor_Naam": {
+										"type": "string"
+									},
+									"GebruikerId": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/api_ref_systeemhuis')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1026,16 +1075,18 @@
 				"schema": {
 					"type": "object",
 					"properties": {
-						"Naam": {
+						"Systeemhuis": {
 							"type": "array",
 							"items": {
-								"type": "string"
-							}
-						},
-						"Systeemhuis Prefix": {
-							"type": "array",
-							"items": {
-								"type": "string"
+								"type": "object",
+								"properties": {
+									"Naam": {
+										"type": "string"
+									},
+									"Prefix": {
+										"type": "string"
+									}
+								}
 							}
 						}
 					}
@@ -1073,7 +1124,7 @@
 						},
 						"fileSystem": "statistics"
 					},
-					"columnDelimiter": ";",
+					"columnDelimiter": ",",
 					"compressionCodec": null,
 					"compressionLevel": "Optimal",
 					"escapeChar": "\\",
@@ -1207,12 +1258,12 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/fct_zoho_accounts')]",
+			"name": "[concat(parameters('factoryName'), '/fct_export_week_parquet_sink')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "dlsaplazap",
+					"referenceName": "AzureDataLakeStorage1",
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
@@ -1223,8 +1274,39 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "Zoho_Gegevens.parquet",
-						"folderPath": "final/Zoho",
+						"folderPath": {
+							"value": "final/statistieken",
+							"type": "Expression"
+						},
+						"fileSystem": "statistics"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/fct_zoho_accounts')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dlsaplazap",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Zoho"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "zoho_gegevens.parquet",
+						"folderPath": "final/zoho",
 						"fileSystem": "statistics"
 					},
 					"compressionCodec": "snappy"
@@ -1349,106 +1431,6 @@
 					{
 						"name": "Postbus_Nummer",
 						"type": "UTF8"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/fct_zoho_postbussen')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "dlsaplazap",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Exports"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "Zoho_Gegevens_Postbussen.parquet",
-						"folderPath": "final/Zoho",
-						"fileSystem": "statistics"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/dlsaplazap')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/raw_statistiek_ingest')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "dlsaplazap",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Exports"
-				},
-				"annotations": [],
-				"type": "Excel",
-				"typeProperties": {
-					"sheetName": "Transacties",
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "Statistieken APLAZA week.xlsx",
-						"folderPath": "raw/ingest",
-						"fileSystem": "statistics"
-					},
-					"firstRowAsHeader": true
-				},
-				"schema": [
-					{
-						"name": "EventId",
-						"type": "String"
-					},
-					{
-						"name": "MachineName",
-						"type": "String"
-					},
-					{
-						"name": "Title",
-						"type": "String"
-					},
-					{
-						"name": "TimeStamp",
-						"type": "String"
-					},
-					{
-						"name": "Message",
-						"type": "String"
-					},
-					{
-						"name": "UserIdentity",
-						"type": "String"
-					},
-					{
-						"name": "GimFunction",
-						"type": "String"
-					},
-					{
-						"name": "Week",
-						"type": "String"
-					},
-					{
-						"name": "Year",
-						"type": "String"
-					},
-					{
-						"name": "MyAand",
-						"type": "String"
 					}
 				]
 			},
