@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "Exports"
+			"name": "Zoho"
 		},
 		"annotations": [],
 		"type": "Parquet",
