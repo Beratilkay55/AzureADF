@@ -188,7 +188,7 @@
 				"          Postbus_Nummer as string",
 				"     ),",
 				"     format: 'parquet',",
-				"     partitionFileNames:['Zoho_Gegevens.parquet'],",
+				"     partitionFileNames:['zoho_gegevens.parquet'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
