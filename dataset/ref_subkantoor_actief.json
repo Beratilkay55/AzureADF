@@ -13,7 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "subkantoren",
+				"fileName": "subkantoren.csv",
 				"folderPath": "final",
 				"fileSystem": "statistics"
 			},
