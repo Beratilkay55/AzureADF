@@ -42,10 +42,6 @@
 					"name": "sink2"
 				},
 				{
-					"dataset": {
-						"referenceName": "ref_subkantoor_actief",
-						"type": "DatasetReference"
-					},
 					"name": "sink3"
 				}
 			],
@@ -152,12 +148,15 @@
 				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['subkantoor.csv'],",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink3"
+				"     store: 'cache',",
+				"     format: 'inline',",
+				"     output: false,",
+				"     saveOrder: 1,",
+				"     partitionBy('hash', 1),",
+				"     preCommands: [],",
+				"     postCommands: []) ~> sink3"
 			]
 		}
 	}
