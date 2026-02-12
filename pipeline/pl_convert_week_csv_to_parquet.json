@@ -132,25 +132,25 @@
 							{
 								"source": {
 									"name": "Message",
-									"type": "String",
+									"type": "Int64",
 									"physicalType": "String"
 								},
 								"sink": {
 									"name": "Message",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "Int64",
+									"isNullable": true
 								}
 							},
 							{
 								"source": {
 									"name": "TimeStamp",
-									"type": "String",
+									"type": "TimeSpan",
 									"physicalType": "String"
 								},
 								"sink": {
 									"name": "TimeStamp",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "TimeSpan",
+									"isNullable": true
 								}
 							},
 							{
