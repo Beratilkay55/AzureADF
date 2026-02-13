@@ -132,25 +132,25 @@
 							{
 								"source": {
 									"name": "Message",
-									"type": "Int64",
+									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
 									"name": "Message",
-									"type": "Int64",
-									"isNullable": true
+									"type": "String",
+									"physicalType": "UTF8"
 								}
 							},
 							{
 								"source": {
 									"name": "TimeStamp",
-									"type": "TimeSpan",
+									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
 									"name": "TimeStamp",
-									"type": "TimeSpan",
-									"isNullable": true
+									"type": "String",
+									"physicalType": "UTF8"
 								}
 							},
 							{
@@ -245,6 +245,30 @@
 								},
 								"sink": {
 									"name": "role_group",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "my_aand",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "my_aand",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "gim_function",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "gim_function",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
