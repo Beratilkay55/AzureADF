@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "Api_Call"
+			"name": "Zoho/Ongebruikte Datasets"
 		},
 		"annotations": [],
 		"type": "Json",
