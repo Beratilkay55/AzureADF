@@ -71,7 +71,7 @@
 									"referenceName": "ref_csv_events_export_check",
 									"type": "DatasetReference",
 									"parameters": {
-										"Folder": "final/statistieken/year=2026",
+										"Folder": "@concat('final/statistieken/year=', pipeline().parameters.pYear)",
 										"FileName": {
 											"value": "@concat('export_week_', string(item()), '.parquet')",
 											"type": "Expression"
@@ -82,7 +82,7 @@
 									"exists"
 								],
 								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
+									"type": "AzureBlobFSReadSettings",
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -507,6 +507,12 @@
 				}
 			}
 		],
+		"parameters": {
+			"pYear": {
+				"type": "string",
+				"defaultValue": "@formatDateTime(utcNow(),'yyyy')"
+			}
+		},
 		"variables": {
 			"currentWeek": {
 				"type": "Integer"
