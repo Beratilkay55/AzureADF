@@ -71,7 +71,10 @@
 									"referenceName": "ref_csv_events_export_check",
 									"type": "DatasetReference",
 									"parameters": {
-										"Folder": "@concat('final/statistieken/year=', pipeline().parameters.pYear)",
+										"Folder": {
+											"value": "@concat('final/statistieken/year=', formatDateTime(utcNow(),'yyyy'))",
+											"type": "Expression"
+										},
 										"FileName": {
 											"value": "@concat('export_week_', string(item()), '.parquet')",
 											"type": "Expression"
@@ -507,12 +510,6 @@
 				}
 			}
 		],
-		"parameters": {
-			"pYear": {
-				"type": "string",
-				"defaultValue": "@formatDateTime(utcNow(),'yyyy')"
-			}
-		},
 		"variables": {
 			"currentWeek": {
 				"type": "Integer"
