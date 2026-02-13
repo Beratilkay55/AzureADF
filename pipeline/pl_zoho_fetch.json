@@ -27,7 +27,7 @@
 						"Content-Type": "application/x-www-form-urlencoded"
 					},
 					"url": "https://accounts.zoho.eu/oauth/v2/token",
-					"body": "client_id=1000.H7AXV6PG197Q4XA3WDGC1PSVBUIOCX&client_secret=02a75a54614ee025d583a6cad09a463579f2c20b1b&refresh_token=1000.042d3217d39b8f731a388c46f668be22.1c5987b6f8f65c5f3e4d55f684fe23dc&grant_type=refresh_token"
+					"body": ""
 				}
 			},
 			{
