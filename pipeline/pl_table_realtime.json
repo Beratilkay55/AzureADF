@@ -86,6 +86,7 @@
 								],
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -127,7 +128,7 @@
 											"source": {
 												"type": "AzurePostgreSqlSource",
 												"query": {
-													"value": "@concat(\n  'SELECT * ',\n  'FROM public.vw_aplaza_all ',\n  'WHERE week = ', string(item()),\n  ' AND jaar = 2026;'\n)\n",
+													"value": "@concat(\n  'SELECT * ',\n  'FROM public.vw_aplaza_all ',\n  'WHERE week = ', string(item()),\n  ' AND jaar = ', formatDateTime(utcNow(), 'yyyy'),\n  ';'\n)\n",
 													"type": "Expression"
 												},
 												"partitionOption": "None",
