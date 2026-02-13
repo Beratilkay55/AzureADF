@@ -48,7 +48,7 @@
 				}
 			},
 			{
-				"name": "Data flow2",
+				"name": "Raw Ingest",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
@@ -83,7 +83,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "Data flow2",
+						"activity": "Raw Ingest",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -189,7 +189,7 @@
 					},
 					"enableLogging": false,
 					"storeSettings": {
-						"type": "AzureBlobStorageReadSettings",
+						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
 						"enablePartitionDiscovery": false
 					}
