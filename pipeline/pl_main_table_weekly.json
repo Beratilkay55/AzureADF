@@ -48,7 +48,7 @@
 				}
 			},
 			{
-				"name": "Data flow2",
+				"name": "Raw Ingest",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
@@ -83,7 +83,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "Data flow2",
+						"activity": "Raw Ingest",
 						"dependencyConditions": [
 							"Succeeded"
 						]
