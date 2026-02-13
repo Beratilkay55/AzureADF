@@ -20,13 +20,6 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "stg_events_current",
-						"type": "DatasetReference"
-					},
-					"name": "Hoofdtabel2"
-				},
-				{
-					"dataset": {
 						"referenceName": "ref_verzekeraar_31",
 						"type": "DatasetReference"
 					},
@@ -38,13 +31,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "Producten"
-				},
-				{
-					"dataset": {
-						"referenceName": "stg_events_current",
-						"type": "DatasetReference"
-					},
-					"name": "Hoofdtabel3"
 				},
 				{
 					"dataset": {
@@ -162,22 +148,6 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> Verzekeraar",
 				"source(output(",
-				"          event_id as string,",
-				"          message as string,",
-				"          user_identity as string,",
-				"          gim_function as string,",
-				"          gim_function_number as integer,",
-				"          week as integer,",
-				"          jaar as integer,",
-				"          my_aand as string,",
-				"          confirmation_at as string,",
-				"          functie_id as string,",
-				"          my_aand_user as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> Hoofdtabel2",
-				"source(output(",
 				"          Verzekeraar as string,",
 				"          Code as string,",
 				"          maatschappij_ID as string",
@@ -192,22 +162,6 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> Producten",
-				"source(output(",
-				"          event_id as string,",
-				"          message as string,",
-				"          user_identity as string,",
-				"          gim_function as string,",
-				"          gim_function_number as integer,",
-				"          week as integer,",
-				"          jaar as integer,",
-				"          my_aand as string,",
-				"          confirmation_at as string,",
-				"          functie_id as string,",
-				"          my_aand_user as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> Hoofdtabel3",
 				"source(output(",
 				"          Code as string,",
 				"          maatschappij_ID as string,",
@@ -244,7 +198,7 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join1",
-				"Hoofdtabel2 filter(gim_function_number == 31 && my_aand != 'H742' && my_aand != 'N741') ~> Wel31",
+				"Hoofdtabel1 filter(gim_function_number == 31 && my_aand != 'H742' && my_aand != 'N741') ~> Wel31",
 				"Wel31, Verzekeraar31 join(my_aand == Code,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
@@ -252,7 +206,7 @@
 				"     broadcast: 'auto')~> join2",
 				"join1, join2, join5 union(byName: true)~> union1",
 				"Niet31 derive(maatschappij_ID = toString(gim_function_number)) ~> MaatschappijID",
-				"Hoofdtabel3 filter(gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741')) ~> H742N741",
+				"Hoofdtabel1 filter(gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741')) ~> H742N741",
 				"H742N741, VerzekeraarH742N741 join(startsWith(my_aand_user, Code),",
 				"     joinType:'cross',",
 				"     matchType:'exact',",
