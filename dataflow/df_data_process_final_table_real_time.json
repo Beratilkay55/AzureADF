@@ -153,7 +153,7 @@
 				"source(output(",
 				"          Code as string,",
 				"          Verzekeraar as string,",
-				"          Column_3 as string",
+				"          Type_postbus as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",

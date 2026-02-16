@@ -19,16 +19,19 @@
 				"fileSystem": "statistics"
 			},
 			"range": "A1:C100000",
-			"firstRowAsHeader": false
+			"firstRowAsHeader": true
 		},
 		"schema": [
 			{
+				"name": "Code",
 				"type": "String"
 			},
 			{
+				"name": "Verzekeraar",
 				"type": "String"
 			},
 			{
+				"name": "Type_postbus",
 				"type": "String"
 			}
 		]
