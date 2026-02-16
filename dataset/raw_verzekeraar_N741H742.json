@@ -1,5 +1,5 @@
 {
-	"name": "ref_verzekeraar_copy1",
+	"name": "raw_verzekeraar_N741H742",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "dlsaplazap",

@@ -13,7 +13,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "Excel1",
+						"referenceName": "raw_verzekeraar",
 						"type": "DatasetReference"
 					},
 					"name": "Verzekeraar"
@@ -48,14 +48,14 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "ref_verzekeraar",
+						"referenceName": "raw_verzekeraar31",
 						"type": "DatasetReference"
 					},
 					"name": "Verzekeraar31"
 				},
 				{
 					"dataset": {
-						"referenceName": "ref_verzekeraar_copy1",
+						"referenceName": "raw_verzekeraar_N741H742",
 						"type": "DatasetReference"
 					},
 					"name": "VerzekeraarH742N741"

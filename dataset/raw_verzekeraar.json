@@ -1,5 +1,5 @@
 {
-	"name": "Excel1",
+	"name": "raw_verzekeraar",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "dlsaplazap",
