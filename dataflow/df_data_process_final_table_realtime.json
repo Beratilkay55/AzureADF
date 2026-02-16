@@ -1,0 +1,322 @@
+{
+	"name": "df_data_process_final_table_realtime",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "stg_events_current_temp_inlezen",
+						"type": "DatasetReference"
+					},
+					"name": "Hoofdtabel"
+				},
+				{
+					"dataset": {
+						"referenceName": "ref_verzekeraar",
+						"type": "DatasetReference"
+					},
+					"name": "Verzekeraar"
+				},
+				{
+					"dataset": {
+						"referenceName": "ref_producten",
+						"type": "DatasetReference"
+					},
+					"name": "Producten"
+				},
+				{
+					"dataset": {
+						"referenceName": "ref_functies",
+						"type": "DatasetReference"
+					},
+					"name": "Functies"
+				},
+				{
+					"dataset": {
+						"referenceName": "api_ref_systeemhuis",
+						"type": "DatasetReference"
+					},
+					"name": "Systeemhuis"
+				},
+				{
+					"dataset": {
+						"referenceName": "api_ref_myid",
+						"type": "DatasetReference"
+					},
+					"name": "MyIDFilter"
+				},
+				{
+					"dataset": {
+						"referenceName": "ref_verzekeraar",
+						"type": "DatasetReference"
+					},
+					"name": "Verzekeraar31"
+				},
+				{
+					"dataset": {
+						"referenceName": "ref_verzekeraar_copy1",
+						"type": "DatasetReference"
+					},
+					"name": "VerzekeraarH742N741"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "fct_events_export_temp",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Niet31"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "Wel31"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "union1"
+				},
+				{
+					"name": "MaatschappijID"
+				},
+				{
+					"name": "H742N741"
+				},
+				{
+					"name": "join5"
+				},
+				{
+					"name": "ProductenJoin"
+				},
+				{
+					"name": "FunctiesJoin"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn5"
+				},
+				{
+					"name": "NieuweKolommen"
+				},
+				{
+					"name": "FilterMessage0"
+				},
+				{
+					"name": "SysteemhuizenJoin"
+				},
+				{
+					"name": "FilterMyID"
+				},
+				{
+					"name": "window1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "VerzekeraarGoID"
+				},
+				{
+					"name": "window2"
+				},
+				{
+					"name": "filter2"
+				},
+				{
+					"name": "VerzekeraarMyAnd"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     p_week as string",
+				"}",
+				"source(output(",
+				"          event_id as string,",
+				"          message as string,",
+				"          user_identity as string,",
+				"          gim_function as string,",
+				"          gim_function_number as integer,",
+				"          week as integer,",
+				"          jaar as integer,",
+				"          my_aand as string,",
+				"          confirmation_at as timestamp,",
+				"          functie_id as string,",
+				"          my_aand_user as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> Hoofdtabel",
+				"source(output(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Verzekeraar",
+				"source(output(",
+				"          {Product GIM code} as string,",
+				"          {Product omschrijving} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Producten",
+				"source(output(",
+				"          Code as string,",
+				"          FunctieSoort as string,",
+				"          FunctieType as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Functies",
+				"source(output(",
+				"          Naam as string,",
+				"          {Systeemhuis Prefix} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Systeemhuis",
+				"source(output(",
+				"          filter as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> MyIDFilter",
+				"source(output(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Verzekeraar31",
+				"source(output(",
+				"          Code as string,",
+				"          Verzekeraar as string,",
+				"          Type_postbus as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> VerzekeraarH742N741",
+				"Hoofdtabel filter(gim_function_number != 31) ~> Niet31",
+				"MaatschappijID, VerzekeraarGoID join(maatschappij_ID == Code,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"Hoofdtabel filter(gim_function_number == 31 && my_aand != 'H742' && my_aand != 'N741') ~> Wel31",
+				"Wel31, VerzekeraarMyAnd join(my_aand == Code,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join1, join2, join5 union(byName: true)~> union1",
+				"Niet31 derive(maatschappij_ID = toString(gim_function_number)) ~> MaatschappijID",
+				"Hoofdtabel filter(gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741')) ~> H742N741",
+				"H742N741, VerzekeraarH742N741 join(startsWith(my_aand_user, Code),",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join5",
+				"NieuweKolommen, Producten join(middenstuk == {Product GIM code},",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> ProductenJoin",
+				"SysteemhuizenJoin, Functies join(functie_id == Functies@Code,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> FunctiesJoin",
+				"derivedColumn5 select(mapColumn(",
+				"          Systeemhuis = Naam,",
+				"          EventNaam,",
+				"          KantoorId,",
+				"          MaatschappijId = maatschappij_ID,",
+				"          Verzekeraar,",
+				"          Jaar = jaar,",
+				"          Week = week,",
+				"          Message = message,",
+				"          TimeStamp = confirmation_at,",
+				"          GebruikerId,",
+				"          FunctieId = functie_id,",
+				"          Productomschrijving = {Product omschrijving},",
+				"          FunctieSoort,",
+				"          FunctieType,",
+				"          KantoorGebruikerId = {KantoorId+GebruikId},",
+				"          User_identity = user_identity,",
+				"          role_group,",
+				"          my_aand,",
+				"          gim_function",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"FilterMessage0 derive({KantoorId+GebruikId} = replace(concat(KantoorId, '_', GebruikerId), '-', '_'),",
+				"          role_group = concat( toString({Systeemhuis Prefix}),     '_',     toString(KantoorId) ),",
+				"          functie_id = concat('\\t', toString(functie_id))) ~> derivedColumn5",
+				"union1 derive(middenstuk = split(gim_function, \".\")[2],",
+				"          KantoorId = split(user_identity, '_')[2],",
+				"          GebruikerId = substring(    user_identity,    locate('_', user_identity, locate('_', user_identity) + 1) + 1),",
+				"          Systeemhuis = split(user_identity, '_')[1],",
+				"          EventNaam = case(    event_id == '43', 'Transacties',    event_id == '45', 'Transacties',    event_id == '49', 'Transacties',    event_id == '73', 'Berichten',    event_id == '74', 'Documenten',    'Onbekend')) ~> NieuweKolommen",
+				"FilterMyID filter(!(",
+				"  (event_id == '73' || event_id == '74')",
+				"  && message == '0'",
+				") && event_id != '43') ~> FilterMessage0",
+				"ProductenJoin, Systeemhuis join(Systeemhuis == {Systeemhuis Prefix},",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> SysteemhuizenJoin",
+				"FunctiesJoin, MyIDFilter exists(maatschappij_ID == filter,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> FilterMyID",
+				"Verzekeraar window(over(Code = Column_3),",
+				"     asc(Column_3, true),",
+				"     rn = rowNumber()) ~> window1",
+				"window1 filter(!(Column_2== 'N741' || Column_2 == 'H742') && rn == 1",
+				") ~> filter1",
+				"filter1 select(mapColumn(",
+				"          Verzekeraar = Column_1,",
+				"          Code = Column_2",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> VerzekeraarGoID",
+				"Verzekeraar31 window(over(Column_2),",
+				"     asc(Column_2, true),",
+				"     rn = rowNumber()) ~> window2",
+				"window2 filter(!(Column_2== 'N741' || Column_2== 'H742') && rn == 1) ~> filter2",
+				"filter2 select(mapColumn(",
+				"          Verzekeraar = Column_1,",
+				"          Code = Column_2,",
+				"          maatschappij_ID = Column_3",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> VerzekeraarMyAnd",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     partitionFileNames:[(concat('export_tijdelijk_', '.parquet'))],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
