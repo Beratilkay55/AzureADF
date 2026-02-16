@@ -14,7 +14,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "subkantoren.csv",
-				"folderPath": "final",
+				"folderPath": "final/subkantoren",
 				"fileSystem": "statistics"
 			},
 			"columnDelimiter": ",",
