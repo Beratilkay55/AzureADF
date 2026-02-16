@@ -216,7 +216,7 @@
 				"join1, join2, join5 union(byName: true)~> union1",
 				"Niet31 derive(maatschappij_ID = toString(gim_function_number)) ~> MaatschappijID",
 				"Hoofdtabel filter(gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741')) ~> H742N741",
-				"H742N741, VerzekeraarH742N741 join(startsWith(my_aand_user, Code),",
+				"H742N741, VerzekeraarH742N741 join(startsWith(my_aand_user, Oud),",
 				"     joinType:'cross',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
