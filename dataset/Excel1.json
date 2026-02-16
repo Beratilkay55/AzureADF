@@ -1,0 +1,25 @@
+{
+	"name": "Excel1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dlsaplazap",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Extra Bestanden"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Blad1",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Aplaza-verzekeraars.xls",
+				"folderPath": "raw",
+				"fileSystem": "statistics"
+			},
+			"range": "A:B"
+		},
+		"schema": []
+	}
+}
