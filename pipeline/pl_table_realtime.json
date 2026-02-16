@@ -431,6 +431,18 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_data_process_final_table_realtime",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"sink1": {
+								"Folder": {
+									"value": "@concat( 'final/statistieken/temp')",
+									"type": "Expression"
+								}
+							}
+						}
+					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
