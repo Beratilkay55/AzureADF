@@ -1,5 +1,5 @@
 {
-	"name": "ref_verzekeraar",
+	"name": "ref_verzekeraar_copy1",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "dlsaplazap",
@@ -11,17 +11,35 @@
 		"annotations": [],
 		"type": "Excel",
 		"typeProperties": {
-			"sheetName": "GoiD_mapping",
+			"sheetName": "Blad1",
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Vervangen GoiD.xlsx",
+				"fileName": "Aplaza-verzekeraars.xlsx",
 				"folderPath": "raw",
 				"fileSystem": "statistics"
 			},
-			"range": "C15:E10000",
+			"range": "",
 			"firstRowAsHeader": false
 		},
 		"schema": [
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
 			{
 				"type": "String"
 			},

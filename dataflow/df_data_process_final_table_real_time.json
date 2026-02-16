@@ -20,7 +20,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "ref_verzekeraar_31",
+						"referenceName": "ref_verzekeraar_copy1",
 						"type": "DatasetReference"
 					},
 					"name": "Verzekeraar31"
@@ -122,6 +122,9 @@
 				},
 				{
 					"name": "FilterMyID"
+				},
+				{
+					"name": "derivedColumn6"
 				}
 			],
 			"scriptLines": [
@@ -144,16 +147,23 @@
 				"     format: 'parquet',",
 				"     wildcardPaths:['staging/tijdelijke_parquet/week_*.parquet']) ~> Hoofdtabel1",
 				"source(output(",
-				"          Code as string,",
-				"          Verzekeraar as string",
+				"          Noorderlinge as string,",
+				"          A019 as string,",
+				"          {1152} as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> Verzekeraar",
 				"source(output(",
-				"          Verzekeraar as string,",
 				"          Code as string,",
-				"          maatschappij_ID as string",
+				"          Verzekeraar as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string,",
+				"          Column_7 as string,",
+				"          Column_8 as string,",
+				"          Column_9 as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -266,6 +276,7 @@
 				"FunctiesJoin, MyIDFilter exists(maatschappij_ID == filter,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> FilterMyID",
+				"Verzekeraar31 derive() ~> derivedColumn6",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
