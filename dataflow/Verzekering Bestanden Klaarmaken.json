@@ -1,0 +1,14 @@
+{
+	"name": "Verzekering Bestanden Klaarmaken",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				""
+			]
+		}
+	}
+}

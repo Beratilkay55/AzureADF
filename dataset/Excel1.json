@@ -18,10 +18,31 @@
 				"folderPath": "raw",
 				"fileSystem": "statistics"
 			},
-			"range": "A:B",
+			"range": "A1:B2000",
 			"firstRowAsHeader": true
 		},
 		"schema": [
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
 			{
 				"type": "String"
 			},
