@@ -23,15 +23,15 @@
 		},
 		"schema": [
 			{
-				"name": "Code",
+				"name": "Oud",
 				"type": "String"
 			},
 			{
-				"name": "Verzekeraar",
+				"name": "Nieuw",
 				"type": "String"
 			},
 			{
-				"name": "Type_postbus",
+				"name": "naam maatschappij",
 				"type": "String"
 			}
 		]
