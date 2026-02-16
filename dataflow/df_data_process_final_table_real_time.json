@@ -33,10 +33,6 @@
 					"name": "Producten"
 				},
 				{
-					"dataset": {
-						"referenceName": "ref_verzekeraar_h742_n741",
-						"type": "DatasetReference"
-					},
 					"name": "VerzekeraarH742N741"
 				},
 				{
@@ -157,13 +153,7 @@
 				"source(output(",
 				"          Code as string,",
 				"          Verzekeraar as string,",
-				"          Column_3 as string,",
-				"          Column_4 as string,",
-				"          Column_5 as string,",
-				"          Column_6 as string,",
-				"          Column_7 as string,",
-				"          Column_8 as string,",
-				"          Column_9 as string",
+				"          Column_3 as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -181,8 +171,7 @@
 				"          Verzekeraar as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> VerzekeraarH742N741",
+				"     validateSchema: false) ~> VerzekeraarH742N741",
 				"source(output(",
 				"          Code as string,",
 				"          FunctieSoort as string,",
