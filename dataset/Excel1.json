@@ -1,0 +1,35 @@
+{
+	"name": "Excel1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dlsaplazap",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Extra Bestanden"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Blad1",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Aplaza-verzekeraars.xlsx",
+				"folderPath": "raw",
+				"fileSystem": "statistics"
+			},
+			"range": "A1:B50000",
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Code",
+				"type": "String"
+			},
+			{
+				"name": "Verzekeraar",
+				"type": "String"
+			}
+		]
+	}
+}
