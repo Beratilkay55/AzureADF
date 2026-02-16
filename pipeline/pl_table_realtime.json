@@ -437,7 +437,7 @@
 						"datasetParameters": {
 							"sink1": {
 								"Folder": {
-									"value": "@concat( 'final/statistieken/Temp')",
+									"value": "@concat( 'final/statistieken/temp')",
 									"type": "Expression"
 								}
 							}
@@ -474,7 +474,7 @@
 						"referenceName": "fct_events_export_temp",
 						"type": "DatasetReference",
 						"parameters": {
-							"Folder": "@concat( 'final/statistieken/Temp')"
+							"Folder": "@concat( 'final/statistieken/temp')"
 						}
 					},
 					"enableLogging": false,
