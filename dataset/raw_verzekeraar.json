@@ -11,10 +11,9 @@
 		"annotations": [],
 		"type": "Excel",
 		"typeProperties": {
-			"sheetName": "Blad1",
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Aplaza-verzekeraars.xlsx",
+				"fileName": "Aplaza-verzekeraars.xls",
 				"folderPath": "raw",
 				"fileSystem": "statistics"
 			},
