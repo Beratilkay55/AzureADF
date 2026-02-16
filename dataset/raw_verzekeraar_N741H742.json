@@ -11,10 +11,10 @@
 		"annotations": [],
 		"type": "Excel",
 		"typeProperties": {
-			"sheetName": "Blad1",
+			"sheetName": "GoiD_mapping",
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Aplaza-verzekeraars.xlsx",
+				"fileName": "Vervangen GoiD.xlsx",
 				"folderPath": "raw",
 				"fileSystem": "statistics"
 			},
