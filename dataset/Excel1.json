@@ -14,12 +14,20 @@
 			"sheetName": "Blad1",
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Aplaza-verzekeraars.xls",
+				"fileName": "Aplaza-verzekeraars.xlsx",
 				"folderPath": "raw",
 				"fileSystem": "statistics"
 			},
-			"range": "A:B"
+			"range": "A:B",
+			"firstRowAsHeader": true
 		},
-		"schema": []
+		"schema": [
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			}
+		]
 	}
 }
