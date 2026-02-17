@@ -15,7 +15,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "Subkantoren.xlsx",
-				"folderPath": "ref",
+				"folderPath": "raw",
 				"fileSystem": "statistics"
 			},
 			"firstRowAsHeader": true
