@@ -259,7 +259,7 @@
 				"          functie_id = concat('\\t', toString(functie_id))) ~> derivedColumn5",
 				"union1 derive(middenstuk = split(gim_function, \".\")[2],",
 				"          KantoorId = split(user_identity, '_')[2],",
-				"          GebruikerId = substring(    user_identity,    locate('_', user_identity, locate('_', user_identity) + 1) + 1),",
+				"          GebruikerId = split(user_identity, '_')[3],",
 				"          Systeemhuis = split(user_identity, '_')[1],",
 				"          EventNaam = case(    event_id == '43', 'Transacties',    event_id == '45', 'Transacties',    event_id == '49', 'Transacties',    event_id == '73', 'Berichten',    event_id == '74', 'Documenten',    'Onbekend')) ~> NieuweKolommen",
 				"FilterMyID filter(!(",
