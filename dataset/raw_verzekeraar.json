@@ -1,5 +1,5 @@
 {
-	"name": "ref_verzekeraar_h742_n741",
+	"name": "raw_verzekeraar",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "dlsaplazap",
@@ -9,18 +9,17 @@
 			"name": "Extra Bestanden"
 		},
 		"annotations": [],
-		"type": "DelimitedText",
+		"type": "Excel",
 		"typeProperties": {
+			"sheetName": "Blad1",
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Verzekeraar H742 N741.csv",
-				"folderPath": "ref",
+				"fileName": "Aplaza-verzekeraars.xls",
+				"folderPath": "raw",
 				"fileSystem": "statistics"
 			},
-			"columnDelimiter": ";",
-			"escapeChar": "\\",
-			"firstRowAsHeader": true,
-			"quoteChar": "\""
+			"range": "A1:B50000",
+			"firstRowAsHeader": true
 		},
 		"schema": [
 			{
@@ -28,14 +27,9 @@
 				"type": "String"
 			},
 			{
-				"name": "maatschappij_ID",
-				"type": "String"
-			},
-			{
 				"name": "Verzekeraar",
 				"type": "String"
 			}
 		]
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }

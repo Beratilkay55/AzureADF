@@ -1,5 +1,5 @@
 {
-	"name": "ref_verzekeraar",
+	"name": "raw_verzekeraar31",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "dlsaplazap",
@@ -9,29 +9,28 @@
 			"name": "Extra Bestanden"
 		},
 		"annotations": [],
-		"type": "DelimitedText",
+		"type": "Excel",
 		"typeProperties": {
+			"sheetName": "GoiD_mapping",
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Verzekeraar.csv",
-				"folderPath": "ref",
+				"fileName": "Vervangen GoiD.xlsx",
+				"folderPath": "raw",
 				"fileSystem": "statistics"
 			},
-			"columnDelimiter": ";",
-			"escapeChar": "\\",
-			"firstRowAsHeader": true,
-			"quoteChar": "\""
+			"range": "C15:E10000",
+			"firstRowAsHeader": false
 		},
 		"schema": [
 			{
-				"name": "Code",
 				"type": "String"
 			},
 			{
-				"name": "Verzekeraar",
+				"type": "String"
+			},
+			{
 				"type": "String"
 			}
 		]
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }
