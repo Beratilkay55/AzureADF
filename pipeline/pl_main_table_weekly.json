@@ -5,8 +5,6 @@
 			{
 				"name": "Data Process",
 				"type": "ExecuteDataFlow",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "SetWeek",
@@ -52,6 +50,8 @@
 			{
 				"name": "Raw Ingest",
 				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Subkantoren",
