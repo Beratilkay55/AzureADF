@@ -215,8 +215,6 @@
 			{
 				"name": "Delete Accounts Json",
 				"type": "Delete",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Data flow1",
@@ -249,8 +247,6 @@
 			{
 				"name": "Delete Postbussen Json",
 				"type": "Delete",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Delete Accounts Json",
@@ -299,8 +295,6 @@
 			{
 				"name": "Delete Postbussen Parquet",
 				"type": "Delete",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Delete Postbussen Json",
