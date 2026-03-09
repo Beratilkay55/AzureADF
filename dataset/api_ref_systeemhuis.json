@@ -24,7 +24,11 @@
 		},
 		"schema": [
 			{
-				"name": "Naam;Systeemhuis Prefix",
+				"name": "Naam",
+				"type": "String"
+			},
+			{
+				"name": "Systeemhuis Prefix",
 				"type": "String"
 			}
 		]
