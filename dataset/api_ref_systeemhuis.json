@@ -17,18 +17,14 @@
 				"folderPath": "ref",
 				"fileSystem": "statistics"
 			},
-			"columnDelimiter": ",",
+			"columnDelimiter": ";",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
 		"schema": [
 			{
-				"name": "Naam",
-				"type": "String"
-			},
-			{
-				"name": "Systeemhuis Prefix",
+				"name": "Naam;Systeemhuis Prefix",
 				"type": "String"
 			}
 		]
