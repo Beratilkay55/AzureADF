@@ -37,9 +37,6 @@
 		},
 		"dlsaplazap_properties_typeProperties_url": {
 			"value": "https://dlsaplazap.dfs.core.windows.net/"
-		},
-		"Uitvoeren_properties_typeProperties_scope": {
-			"value": "/subscriptions/c9f8e306-962f-4818-978b-7ff3187cf577/resourceGroups/rg-aplaza-p-data/providers/Microsoft.Storage/storageAccounts/dlsaplazap"
 		}
 	}
 }

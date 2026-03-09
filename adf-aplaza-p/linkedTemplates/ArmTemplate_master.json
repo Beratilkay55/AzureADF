@@ -51,10 +51,6 @@
 			"type": "string",
 			"defaultValue": "https://dlsaplazap.dfs.core.windows.net/"
 		},
-		"Uitvoeren_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/c9f8e306-962f-4818-978b-7ff3187cf577/resourceGroups/rg-aplaza-p-data/providers/Microsoft.Storage/storageAccounts/dlsaplazap"
-		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI naar opslagaccount met gekoppelde ARM-sjablonen"
@@ -102,9 +98,6 @@
 					},
 					"dlsaplazap_properties_typeProperties_url": {
 						"value": "[parameters('dlsaplazap_properties_typeProperties_url')]"
-					},
-					"Uitvoeren_properties_typeProperties_scope": {
-						"value": "[parameters('Uitvoeren_properties_typeProperties_scope')]"
 					}
 				}
 			},
