@@ -98,7 +98,7 @@
 		],
 		"typeProperties": {
 			"schema": "statistics",
-			"table": "exceptions"
+			"table": ""
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
