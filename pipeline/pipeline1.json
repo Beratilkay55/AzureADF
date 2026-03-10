@@ -16,14 +16,15 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "DelimitedTextSource",
+						"type": "ParquetSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
+							"wildcardFileName": "*.parquet",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
+							"type": "ParquetReadSettings"
 						}
 					},
 					"sink": {
@@ -44,8 +45,11 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "ref_csv_events_export",
-						"type": "DatasetReference"
+						"referenceName": "fct_events_parquet",
+						"type": "DatasetReference",
+						"parameters": {
+							"Folder": "final/statistieken"
+						}
 					}
 				],
 				"outputs": [
