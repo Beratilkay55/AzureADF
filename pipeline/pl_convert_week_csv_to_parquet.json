@@ -47,204 +47,96 @@
 						"mappings": [
 							{
 								"source": {
-									"name": "Systeemhuis",
+									"name": "systeemhuis_id",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Systeemhuis",
+									"name": "systeemhuis_id",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
 							},
 							{
 								"source": {
-									"name": "EventNaam",
+									"name": "event_id",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "EventNaam",
+									"name": "event_id",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
 							},
 							{
 								"source": {
-									"name": "KantoorId",
+									"name": "message",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "KantoorId",
+									"name": "message",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
 							},
 							{
 								"source": {
-									"name": "MaatschappijId",
+									"name": "user_identity",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "MaatschappijId",
+									"name": "user_identity",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
 							},
 							{
 								"source": {
-									"name": "Verzekeraar",
+									"name": "gim_function",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Verzekeraar",
+									"name": "gim_function",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
 							},
 							{
 								"source": {
-									"name": "Jaar",
+									"name": "maatschappij_ID",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Jaar",
+									"name": "maatschappij_ID",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
 							},
 							{
 								"source": {
-									"name": "Week",
+									"name": "week",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Week",
+									"name": "week",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
 							},
 							{
 								"source": {
-									"name": "Message",
+									"name": "jaar",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Message",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
-									"name": "TimeStamp",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "TimeStamp",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
-									"name": "GebruikerId",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "GebruikerId",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
-									"name": "FunctieId",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "FunctieId",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
-									"name": "Productomschrijving",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "Productomschrijving",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
-									"name": "FunctieSoort",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "FunctieSoort",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
-									"name": "FunctieType",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "FunctieType",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
-									"name": "KantoorGebruikerId",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "KantoorGebruikerId",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
-									"name": "User_identity",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "User_identity",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
-									"name": "role_group",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "role_group",
+									"name": "jaar",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
@@ -263,12 +155,96 @@
 							},
 							{
 								"source": {
-									"name": "gim_function",
+									"name": "TimeStamp",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "gim_function",
+									"name": "TimeStamp",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "functie_id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "functie_id",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "my_aand_user",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "my_aand_user",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "middenstuk",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "middenstuk",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "KantoorId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "KantoorId",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "GebruikerId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "GebruikerId",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "KantoorGebruikerId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "KantoorGebruikerId",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "role_group",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "role_group",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
