@@ -16,15 +16,15 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "ParquetSource",
+						"type": "DelimitedTextSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
-							"wildcardFileName": "*.parquet",
+							"wildcardFileName": "*.csv",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
-							"type": "ParquetReadSettings"
+							"type": "DelimitedTextReadSettings"
 						}
 					},
 					"sink": {
@@ -36,6 +36,212 @@
 					"enableStaging": false,
 					"translator": {
 						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "systeemhuis_id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "systeemhuis_id",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "event_id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "event_id",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "message",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "message",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "user_identity",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "user_identity",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "gim_function",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "gim_function",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "maatschappij_ID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "maatschappij_id",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "week",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "week",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "jaar",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "jaar",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "my_aand",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "my_aand",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "TimeStamp",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "timestamp",
+									"type": "DateTime",
+									"physicalType": "timestamp without time zone"
+								}
+							},
+							{
+								"source": {
+									"name": "functie_id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "functie_id",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "my_aand_user",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "my_aand_user",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "middenstuk",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "middenstuk",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "KantoorId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "kantoorid",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "GebruikerId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "gebruikerid",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "KantoorGebruikerId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "kantoorgebruikerid",
+									"type": "String",
+									"physicalType": "text"
+								}
+							},
+							{
+								"source": {
+									"name": "role_group",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "role_group",
+									"type": "String",
+									"physicalType": "text"
+								}
+							}
+						],
 						"typeConversion": true,
 						"typeConversionSettings": {
 							"allowDataTruncation": true,
@@ -45,10 +251,10 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "fct_events_parquet",
+						"referenceName": "ref_csv_events_export",
 						"type": "DatasetReference",
 						"parameters": {
-							"Folder": "final/statistieken"
+							"Folder": "staging/statistieken_csv"
 						}
 					}
 				],
