@@ -1,5 +1,5 @@
 {
-	"name": "df_data_process_final_table_copy1",
+	"name": "df_data_process_final_table_realtime",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
