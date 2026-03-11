@@ -44,12 +44,6 @@
 			],
 			"transformations": [
 				{
-					"name": "Niet31"
-				},
-				{
-					"name": "Wel31"
-				},
-				{
 					"name": "join2"
 				},
 				{
@@ -57,9 +51,6 @@
 				},
 				{
 					"name": "MaatschappijID"
-				},
-				{
-					"name": "H742N741"
 				},
 				{
 					"name": "join5"
@@ -90,6 +81,9 @@
 				},
 				{
 					"name": "select2"
+				},
+				{
+					"name": "split1"
 				}
 			],
 			"scriptLines": [
@@ -133,17 +127,14 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> VerzekeraarH742N741",
-				"Hoofdtabel filter(gim_function_number != 31) ~> Niet31",
-				"Hoofdtabel filter(gim_function_number == 31 && my_aand != 'H742' && my_aand != 'N741') ~> Wel31",
-				"Wel31, VerzekeraarMyAnd join(my_aand == Code,",
+				"split1@WEL31, VerzekeraarMyAnd join(my_aand == Code,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join2",
 				"MaatschappijID, join2, join5 union(byName: true)~> union1",
-				"Niet31 derive(maatschappij_ID = toString(gim_function_number)) ~> MaatschappijID",
-				"Hoofdtabel filter(gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741')) ~> H742N741",
-				"H742N741, select2 join(startsWith(my_aand_user, Code),",
+				"split1@NIET31 derive(maatschappij_ID = toString(gim_function_number)) ~> MaatschappijID",
+				"split1@H742N741, select2 join(startsWith(my_aand_user, Code),",
 				"     joinType:'cross',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -203,6 +194,10 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select2",
+				"Hoofdtabel split(gim_function_number != 31,",
+				"     gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741'),",
+				"     gim_function_number == 31,",
+				"     disjoint: false) ~> split1@(NIET31, H742N741, WEL31)",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:[(concat('export_week_', $p_week, '.csv'))],",
