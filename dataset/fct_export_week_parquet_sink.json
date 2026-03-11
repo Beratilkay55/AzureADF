@@ -23,11 +23,55 @@
 		},
 		"schema": [
 			{
-				"name": "Systeemhuis",
+				"name": "systeemhuis_id",
 				"type": "UTF8"
 			},
 			{
-				"name": "EventNaam",
+				"name": "event_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "message",
+				"type": "UTF8"
+			},
+			{
+				"name": "user_identity",
+				"type": "UTF8"
+			},
+			{
+				"name": "gim_function",
+				"type": "UTF8"
+			},
+			{
+				"name": "maatschappij_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "week",
+				"type": "UTF8"
+			},
+			{
+				"name": "jaar",
+				"type": "UTF8"
+			},
+			{
+				"name": "my_aand",
+				"type": "UTF8"
+			},
+			{
+				"name": "TimeStamp",
+				"type": "UTF8"
+			},
+			{
+				"name": "functie_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "my_aand_user",
+				"type": "UTF8"
+			},
+			{
+				"name": "middenstuk",
 				"type": "UTF8"
 			},
 			{
@@ -35,67 +79,15 @@
 				"type": "UTF8"
 			},
 			{
-				"name": "Kantoornaam",
-				"type": "UTF8"
-			},
-			{
-				"name": "Subkantoor",
-				"type": "UTF8"
-			},
-			{
-				"name": "MaatschappijId",
-				"type": "UTF8"
-			},
-			{
-				"name": "Verzekeraar",
-				"type": "UTF8"
-			},
-			{
-				"name": "Jaar",
-				"type": "INT64"
-			},
-			{
-				"name": "Week",
-				"type": "INT64"
-			},
-			{
-				"name": "Message",
-				"type": "INT64"
-			},
-			{
-				"name": "TimeStamp",
-				"type": "UTF8"
-			},
-			{
 				"name": "GebruikerId",
 				"type": "UTF8"
 			},
 			{
-				"name": "FunctieId",
-				"type": "UTF8"
-			},
-			{
-				"name": "FunctieSoort",
-				"type": "UTF8"
-			},
-			{
-				"name": "FunctieType",
-				"type": "UTF8"
-			},
-			{
-				"name": "Systeemhuis_prefix",
-				"type": "UTF8"
-			},
-			{
-				"name": "User_identity",
+				"name": "KantoorGebruikerId",
 				"type": "UTF8"
 			},
 			{
 				"name": "role_group",
-				"type": "UTF8"
-			},
-			{
-				"name": "KantoorGebruikerId",
 				"type": "UTF8"
 			},
 			{
