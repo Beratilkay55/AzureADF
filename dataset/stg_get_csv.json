@@ -24,6 +24,75 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "systeemhuis_id",
+				"type": "String"
+			},
+			{
+				"name": "event_id",
+				"type": "String"
+			},
+			{
+				"name": "message",
+				"type": "String"
+			},
+			{
+				"name": "user_identity",
+				"type": "String"
+			},
+			{
+				"name": "gim_function",
+				"type": "String"
+			},
+			{
+				"name": "maatschappij_ID",
+				"type": "String"
+			},
+			{
+				"name": "week",
+				"type": "String"
+			},
+			{
+				"name": "jaar",
+				"type": "String"
+			},
+			{
+				"name": "my_aand",
+				"type": "String"
+			},
+			{
+				"name": "TimeStamp",
+				"type": "String"
+			},
+			{
+				"name": "functie_id",
+				"type": "String"
+			},
+			{
+				"name": "my_aand_user",
+				"type": "String"
+			},
+			{
+				"name": "middenstuk",
+				"type": "String"
+			},
+			{
+				"name": "KantoorId",
+				"type": "String"
+			},
+			{
+				"name": "GebruikerId",
+				"type": "String"
+			},
+			{
+				"name": "KantoorGebruikerId",
+				"type": "String"
+			},
+			{
+				"name": "role_group",
+				"type": "String"
+			}
+		]
 	}
 }
