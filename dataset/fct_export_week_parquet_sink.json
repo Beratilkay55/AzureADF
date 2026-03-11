@@ -21,6 +21,87 @@
 			},
 			"compressionCodec": "snappy"
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "Systeemhuis",
+				"type": "UTF8"
+			},
+			{
+				"name": "EventNaam",
+				"type": "UTF8"
+			},
+			{
+				"name": "KantoorId",
+				"type": "UTF8"
+			},
+			{
+				"name": "Kantoornaam",
+				"type": "UTF8"
+			},
+			{
+				"name": "Subkantoor",
+				"type": "UTF8"
+			},
+			{
+				"name": "MaatschappijId",
+				"type": "UTF8"
+			},
+			{
+				"name": "Verzekeraar",
+				"type": "UTF8"
+			},
+			{
+				"name": "Jaar",
+				"type": "INT64"
+			},
+			{
+				"name": "Week",
+				"type": "INT64"
+			},
+			{
+				"name": "Message",
+				"type": "INT64"
+			},
+			{
+				"name": "TimeStamp",
+				"type": "UTF8"
+			},
+			{
+				"name": "GebruikerId",
+				"type": "UTF8"
+			},
+			{
+				"name": "FunctieId",
+				"type": "UTF8"
+			},
+			{
+				"name": "FunctieSoort",
+				"type": "UTF8"
+			},
+			{
+				"name": "FunctieType",
+				"type": "UTF8"
+			},
+			{
+				"name": "Systeemhuis_prefix",
+				"type": "UTF8"
+			},
+			{
+				"name": "User_identity",
+				"type": "UTF8"
+			},
+			{
+				"name": "role_group",
+				"type": "UTF8"
+			},
+			{
+				"name": "KantoorGebruikerId",
+				"type": "UTF8"
+			},
+			{
+				"name": "year",
+				"type": "UTF8"
+			}
+		]
 	}
 }
