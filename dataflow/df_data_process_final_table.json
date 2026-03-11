@@ -197,7 +197,7 @@
 				"Hoofdtabel split(gim_function_number != 31,",
 				"     gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741'),",
 				"     gim_function_number == 31,",
-				"     disjoint: false) ~> split1@(NIET31, H742N741, WEL31)",
+				"     disjoint: true) ~> split1@(NIET31, H742N741, WEL31)",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:[(concat('export_week_', $p_week, '.csv'))],",
