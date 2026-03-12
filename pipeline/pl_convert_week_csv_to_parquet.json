@@ -212,18 +212,6 @@
 									"type": "String",
 									"physicalType": "UTF8"
 								}
-							},
-							{
-								"source": {
-									"name": "role_group",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "role_group",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
 							}
 						],
 						"typeConversion": true,
