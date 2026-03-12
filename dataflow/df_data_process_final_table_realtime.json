@@ -237,7 +237,6 @@
 				"          FunctieType,",
 				"          KantoorGebruikerId = {KantoorId+GebruikId},",
 				"          User_identity = user_identity,",
-				"          role_group,",
 				"          gim_function",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
