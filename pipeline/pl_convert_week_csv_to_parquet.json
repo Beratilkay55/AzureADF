@@ -143,18 +143,6 @@
 							},
 							{
 								"source": {
-									"name": "my_aand",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "my_aand",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
 									"name": "TimeStamp",
 									"type": "String",
 									"physicalType": "String"
@@ -179,24 +167,12 @@
 							},
 							{
 								"source": {
-									"name": "my_aand_user",
+									"name": "middenstuk",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "my_aand_user",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
-									"name": "product_id",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "product_id",
+									"name": "middenstuk",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
@@ -233,6 +209,18 @@
 								},
 								"sink": {
 									"name": "KantoorGebruikerId",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "role_group",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "role_group",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
