@@ -19,17 +19,9 @@
 					"name": "Verzekeraar"
 				},
 				{
-					"dataset": {
-						"referenceName": "ref_producten",
-						"type": "DatasetReference"
-					},
 					"name": "Producten"
 				},
 				{
-					"dataset": {
-						"referenceName": "ref_functies",
-						"type": "DatasetReference"
-					},
 					"name": "Functies"
 				},
 				{
@@ -162,16 +154,14 @@
 				"          {Product omschrijving} as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> Producten",
+				"     validateSchema: false) ~> Producten",
 				"source(output(",
 				"          Code as string,",
 				"          FunctieSoort as string,",
 				"          FunctieType as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> Functies",
+				"     validateSchema: false) ~> Functies",
 				"source(output(",
 				"          Naam as string,",
 				"          {Systeemhuis Prefix} as string",
@@ -248,7 +238,6 @@
 				"          KantoorGebruikerId = {KantoorId+GebruikId},",
 				"          User_identity = user_identity,",
 				"          role_group,",
-				"          my_aand,",
 				"          gim_function",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",

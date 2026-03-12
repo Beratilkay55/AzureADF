@@ -191,12 +191,12 @@
 							},
 							{
 								"source": {
-									"name": "middenstuk",
+									"name": "product_id",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "middenstuk",
+									"name": "product_id",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
@@ -233,18 +233,6 @@
 								},
 								"sink": {
 									"name": "KantoorGebruikerId",
-									"type": "String",
-									"physicalType": "UTF8"
-								}
-							},
-							{
-								"source": {
-									"name": "role_group",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "role_group",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
