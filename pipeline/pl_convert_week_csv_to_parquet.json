@@ -212,6 +212,18 @@
 									"type": "String",
 									"physicalType": "UTF8"
 								}
+							},
+							{
+								"source": {
+									"name": "my_aand",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "my_aand",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
 							}
 						],
 						"typeConversion": true,
