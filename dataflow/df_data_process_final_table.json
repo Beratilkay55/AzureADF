@@ -13,34 +13,6 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "raw_verzekeraar",
-						"type": "DatasetReference"
-					},
-					"name": "Verzekeraar"
-				},
-				{
-					"dataset": {
-						"referenceName": "ref_producten",
-						"type": "DatasetReference"
-					},
-					"name": "Producten"
-				},
-				{
-					"dataset": {
-						"referenceName": "ref_functies",
-						"type": "DatasetReference"
-					},
-					"name": "Functies"
-				},
-				{
-					"dataset": {
-						"referenceName": "api_ref_systeemhuis",
-						"type": "DatasetReference"
-					},
-					"name": "Systeemhuis"
-				},
-				{
-					"dataset": {
 						"referenceName": "api_ref_myid",
 						"type": "DatasetReference"
 					},
@@ -72,15 +44,6 @@
 			],
 			"transformations": [
 				{
-					"name": "Niet31"
-				},
-				{
-					"name": "join1"
-				},
-				{
-					"name": "Wel31"
-				},
-				{
 					"name": "join2"
 				},
 				{
@@ -90,16 +53,7 @@
 					"name": "MaatschappijID"
 				},
 				{
-					"name": "H742N741"
-				},
-				{
 					"name": "join5"
-				},
-				{
-					"name": "ProductenJoin"
-				},
-				{
-					"name": "FunctiesJoin"
 				},
 				{
 					"name": "select1"
@@ -114,9 +68,6 @@
 					"name": "FilterMessage0"
 				},
 				{
-					"name": "SysteemhuizenJoin"
-				},
-				{
 					"name": "FilterMyID"
 				},
 				{
@@ -127,6 +78,12 @@
 				},
 				{
 					"name": "VerzekeraarMyAnd"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "split1"
 				}
 			],
 			"scriptLines": [
@@ -150,35 +107,6 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> Hoofdtabel",
 				"source(output(",
-				"          Code as string,",
-				"          Verzekeraar as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> Verzekeraar",
-				"source(output(",
-				"          {Product GIM code} as string,",
-				"          {Product omschrijving} as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> Producten",
-				"source(output(",
-				"          Code as string,",
-				"          FunctieSoort as string,",
-				"          FunctieType as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> Functies",
-				"source(output(",
-				"          Naam as string,",
-				"          {Systeemhuis Prefix} as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> Systeemhuis",
-				"source(output(",
 				"          filter as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
@@ -194,87 +122,57 @@
 				"     ignoreNoFilesFound: false) ~> Verzekeraar31",
 				"source(output(",
 				"          Oud as string,",
-				"          Nieuw as string,",
-				"          {naam maatschappij} as string",
+				"          Nieuw as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> VerzekeraarH742N741",
-				"Hoofdtabel filter(gim_function_number != 31) ~> Niet31",
-				"MaatschappijID, Verzekeraar join(maatschappij_ID == Code,",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1",
-				"Hoofdtabel filter(gim_function_number == 31 && my_aand != 'H742' && my_aand != 'N741') ~> Wel31",
-				"Wel31, VerzekeraarMyAnd join(my_aand == Code,",
+				"split1@WEL31, VerzekeraarMyAnd join(my_aand == Code,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join2",
-				"join1, join2, join5 union(byName: true)~> union1",
-				"Niet31 derive(maatschappij_ID = toString(gim_function_number)) ~> MaatschappijID",
-				"Hoofdtabel filter(gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741')) ~> H742N741",
-				"H742N741, VerzekeraarH742N741 join(startsWith(my_aand_user, Oud),",
+				"MaatschappijID, join2, join5 union(byName: true)~> union1",
+				"split1@NIET31 derive(maatschappij_ID = toString(gim_function_number)) ~> MaatschappijID",
+				"split1@H742N741, select2 join(startsWith(my_aand_user, Code),",
 				"     joinType:'cross',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join5",
-				"NieuweKolommen, Producten join(middenstuk == {Product GIM code},",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> ProductenJoin",
-				"SysteemhuizenJoin, Functies join(functie_id == Functies@Code,",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> FunctiesJoin",
 				"derivedColumn5 select(mapColumn(",
-				"          Systeemhuis = Naam,",
-				"          EventNaam,",
-				"          KantoorId,",
-				"          MaatschappijId = maatschappij_ID,",
-				"          Verzekeraar,",
-				"          Jaar = jaar,",
-				"          Week = week,",
-				"          Message = message,",
+				"          systeemhuis_id = Systeemhuis,",
+				"          event_id,",
+				"          message,",
+				"          user_identity,",
+				"          gim_function,",
+				"          maatschappij_ID,",
+				"          week,",
+				"          jaar,",
 				"          TimeStamp = confirmation_at,",
+				"          functie_id,",
+				"          product_id,",
+				"          KantoorId,",
 				"          GebruikerId,",
-				"          FunctieId = functie_id,",
-				"          Productomschrijving = {Product omschrijving},",
-				"          FunctieSoort,",
-				"          FunctieType,",
-				"          KantoorGebruikerId = {KantoorId+GebruikId},",
-				"          User_identity = user_identity,",
-				"          role_group,",
-				"          my_aand,",
-				"          gim_function",
+				"          KantoorGebruikerId",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"FilterMessage0 derive({KantoorId+GebruikId} = replace(concat(KantoorId, '_', GebruikerId), '-', '_'),",
-				"          role_group = concat( toString({Systeemhuis Prefix}),     '_',     toString(KantoorId) ),",
+				"FilterMessage0 derive(KantoorGebruikerId = replace(concat(KantoorId, '_', GebruikerId), '-', '_'),",
+				"          role_group = concat( toString(Systeemhuis),     '_',     toString(KantoorId) ),",
 				"          functie_id = concat('\\t', toString(functie_id))) ~> derivedColumn5",
-				"union1 derive(middenstuk = split(gim_function, \".\")[2],",
+				"union1 derive(product_id = split(gim_function, \".\")[2],",
 				"          KantoorId = split(user_identity, '_')[2],",
 				"          GebruikerId = case(\r",
 				"  split(user_identity,'_')[4] != '',\r",
 				"  split(user_identity,'_')[3] + '-' + split(user_identity,'_')[4],\r",
 				"  split(user_identity,'_')[3]\r",
 				"),",
-				"          Systeemhuis = split(user_identity, '_')[1],",
-				"          EventNaam = case(    event_id == '43', 'Transacties',    event_id == '45', 'Transacties',    event_id == '49', 'Transacties',    event_id == '73', 'Berichten',    event_id == '74', 'Documenten',    'Onbekend')) ~> NieuweKolommen",
+				"          Systeemhuis = split(user_identity, '_')[1]) ~> NieuweKolommen",
 				"FilterMyID filter(!(",
 				"  (event_id == '73' || event_id == '74')",
 				"  && message == '0'",
 				") && event_id != '43') ~> FilterMessage0",
-				"ProductenJoin, Systeemhuis join(Systeemhuis == {Systeemhuis Prefix},",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> SysteemhuizenJoin",
-				"FunctiesJoin, MyIDFilter exists(maatschappij_ID == filter,",
+				"NieuweKolommen, MyIDFilter exists(maatschappij_ID == filter,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> FilterMyID",
 				"Verzekeraar31 window(over(Column_2),",
@@ -282,12 +180,21 @@
 				"     rn = rowNumber()) ~> window2",
 				"window2 filter(!(Column_2== 'N741' || Column_2== 'H742') && rn == 1) ~> filter2",
 				"filter2 select(mapColumn(",
-				"          Verzekeraar = Column_1,",
 				"          Code = Column_2,",
 				"          maatschappij_ID = Column_3",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> VerzekeraarMyAnd",
+				"VerzekeraarH742N741 select(mapColumn(",
+				"          Code = Oud,",
+				"          maatschappij_ID = Nieuw",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"Hoofdtabel split(gim_function_number != 31,",
+				"     gim_function_number == 31 && (my_aand == 'H742' || my_aand == 'N741'),",
+				"     gim_function_number == 31,",
+				"     disjoint: false) ~> split1@(NIET31, H742N741, WEL31)",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:[(concat('export_week_', $p_week, '.csv'))],",

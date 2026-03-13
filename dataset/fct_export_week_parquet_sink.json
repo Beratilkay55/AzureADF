@@ -21,6 +21,79 @@
 			},
 			"compressionCodec": "snappy"
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "systeemhuis_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "event_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "message",
+				"type": "UTF8"
+			},
+			{
+				"name": "user_identity",
+				"type": "UTF8"
+			},
+			{
+				"name": "gim_function",
+				"type": "UTF8"
+			},
+			{
+				"name": "maatschappij_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "week",
+				"type": "UTF8"
+			},
+			{
+				"name": "jaar",
+				"type": "UTF8"
+			},
+			{
+				"name": "my_aand",
+				"type": "UTF8"
+			},
+			{
+				"name": "TimeStamp",
+				"type": "UTF8"
+			},
+			{
+				"name": "functie_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "my_aand_user",
+				"type": "UTF8"
+			},
+			{
+				"name": "middenstuk",
+				"type": "UTF8"
+			},
+			{
+				"name": "KantoorId",
+				"type": "UTF8"
+			},
+			{
+				"name": "GebruikerId",
+				"type": "UTF8"
+			},
+			{
+				"name": "KantoorGebruikerId",
+				"type": "UTF8"
+			},
+			{
+				"name": "role_group",
+				"type": "UTF8"
+			},
+			{
+				"name": "year",
+				"type": "UTF8"
+			}
+		]
 	}
 }

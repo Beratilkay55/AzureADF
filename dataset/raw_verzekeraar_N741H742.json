@@ -18,7 +18,7 @@
 				"folderPath": "raw",
 				"fileSystem": "statistics"
 			},
-			"range": "A1:C100000",
+			"range": "A1:B100000",
 			"firstRowAsHeader": true
 		},
 		"schema": [
@@ -28,10 +28,6 @@
 			},
 			{
 				"name": "Nieuw",
-				"type": "String"
-			},
-			{
-				"name": "naam maatschappij",
 				"type": "String"
 			}
 		]

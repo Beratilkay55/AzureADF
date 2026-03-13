@@ -97,8 +97,8 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "statistics",
-			"table": "exceptions"
+			"schema": "public",
+			"table": "fct_events_sql"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"

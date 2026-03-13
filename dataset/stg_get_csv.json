@@ -26,35 +26,39 @@
 		},
 		"schema": [
 			{
-				"name": "Systeemhuis",
+				"name": "systeemhuis_id",
 				"type": "String"
 			},
 			{
-				"name": "EventNaam",
+				"name": "event_id",
 				"type": "String"
 			},
 			{
-				"name": "KantoorId",
+				"name": "message",
 				"type": "String"
 			},
 			{
-				"name": "MaatschappijId",
+				"name": "user_identity",
 				"type": "String"
 			},
 			{
-				"name": "Verzekeraar",
+				"name": "gim_function",
 				"type": "String"
 			},
 			{
-				"name": "Jaar",
+				"name": "maatschappij_ID",
 				"type": "String"
 			},
 			{
-				"name": "Week",
+				"name": "week",
 				"type": "String"
 			},
 			{
-				"name": "Message",
+				"name": "jaar",
+				"type": "String"
+			},
+			{
+				"name": "my_aand",
 				"type": "String"
 			},
 			{
@@ -62,31 +66,27 @@
 				"type": "String"
 			},
 			{
+				"name": "functie_id",
+				"type": "String"
+			},
+			{
+				"name": "my_aand_user",
+				"type": "String"
+			},
+			{
+				"name": "middenstuk",
+				"type": "String"
+			},
+			{
+				"name": "KantoorId",
+				"type": "String"
+			},
+			{
 				"name": "GebruikerId",
 				"type": "String"
 			},
 			{
-				"name": "FunctieId",
-				"type": "String"
-			},
-			{
-				"name": "Productomschrijving",
-				"type": "String"
-			},
-			{
-				"name": "FunctieSoort",
-				"type": "String"
-			},
-			{
-				"name": "FunctieType",
-				"type": "String"
-			},
-			{
 				"name": "KantoorGebruikerId",
-				"type": "String"
-			},
-			{
-				"name": "User_identity",
 				"type": "String"
 			},
 			{
