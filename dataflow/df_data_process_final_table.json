@@ -150,7 +150,7 @@
 				"          jaar,",
 				"          TimeStamp = confirmation_at,",
 				"          functie_id,",
-				"          middenstuk = product_id,",
+				"          product_id,",
 				"          KantoorId,",
 				"          GebruikerId,",
 				"          KantoorGebruikerId",
