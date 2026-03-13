@@ -143,12 +143,12 @@
 							},
 							{
 								"source": {
-									"name": "TimeStamp",
+									"name": "timestamp",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "TimeStamp",
+									"name": "timestamp",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
@@ -167,48 +167,48 @@
 							},
 							{
 								"source": {
-									"name": "middenstuk",
+									"name": "product_id",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "middenstuk",
+									"name": "product_id",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
 							},
 							{
 								"source": {
-									"name": "KantoorId",
+									"name": "kantoor_id",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "KantoorId",
+									"name": "kantoor_id",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
 							},
 							{
 								"source": {
-									"name": "GebruikerId",
+									"name": "gebruiker_id",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "GebruikerId",
+									"name": "gebruiker_id",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
 							},
 							{
 								"source": {
-									"name": "KantoorGebruikerId",
+									"name": "kantoorgebruiker_id",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "KantoorGebruikerId",
+									"name": "kantoorgebruiker_id",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
