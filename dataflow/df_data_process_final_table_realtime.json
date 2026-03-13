@@ -266,7 +266,6 @@
 				"     rn = rowNumber()) ~> window2",
 				"window2 filter(!(Column_2== 'N741' || Column_2== 'H742') && rn == 1) ~> filter2",
 				"filter2 select(mapColumn(",
-				"          Verzekeraar = Column_1,",
 				"          Code = Column_2,",
 				"          maatschappij_ID = Column_3",
 				"     ),",
