@@ -149,7 +149,7 @@
 				"          maatschappij_ID,",
 				"          week,",
 				"          jaar,",
-				"          TimeStamp = confirmation_at,",
+				"          timestamp = confirmation_at,",
 				"          functie_id,",
 				"          product_id,",
 				"          kantoor_id = KantoorId,",
