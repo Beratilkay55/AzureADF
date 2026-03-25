@@ -172,7 +172,7 @@
 				"          Systeemhuis = split(user_identity, '_')[1]) ~> NieuweKolommen",
 				"FilterMyID filter(!(",
 				"  (event_id == '73' || event_id == '74')",
-				"  && message == '0'",
+				"  && message == 0",
 				") && event_id != '43') ~> FilterMessage0",
 				"NieuweKolommen, MyIDFilter exists(maatschappij_ID == filter,",
 				"     negate:true,",
