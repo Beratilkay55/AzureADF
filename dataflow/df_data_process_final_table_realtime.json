@@ -87,9 +87,6 @@
 				}
 			],
 			"scriptLines": [
-				"parameters{",
-				"     p_week as string",
-				"}",
 				"source(output(",
 				"          event_id as string,",
 				"          message as long,",
