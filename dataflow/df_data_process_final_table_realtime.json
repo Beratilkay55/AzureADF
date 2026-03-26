@@ -87,9 +87,6 @@
 				}
 			],
 			"scriptLines": [
-				"parameters{",
-				"     p_week as string",
-				"}",
 				"source(output(",
 				"          event_id as string,",
 				"          message as long,",
@@ -172,7 +169,7 @@
 				"          Systeemhuis = split(user_identity, '_')[1]) ~> NieuweKolommen",
 				"FilterMyID filter(!(",
 				"  (event_id == '73' || event_id == '74')",
-				"  && message == '0'",
+				"  && message == 0",
 				") && event_id != '43') ~> FilterMessage0",
 				"NieuweKolommen, MyIDFilter exists(maatschappij_ID == filter,",
 				"     negate:true,",
@@ -200,7 +197,7 @@
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
-				"     partitionFileNames:[(concat('export_week_', $p_week, '.csv'))],",
+				"     partitionFileNames:[(concat('export_tijdelijk','.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
