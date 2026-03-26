@@ -197,7 +197,7 @@
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
-				"     partitionFileNames:[(concat('export_week_', $p_week, '.csv'))],",
+				"     partitionFileNames:[(concat('export_tijdelijk','.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
